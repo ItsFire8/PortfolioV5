@@ -10,7 +10,9 @@ services:
       - path: .env
         required: false
     environment:
+      # fixed inside the container – PORT in .env only changes the host port
       DATA_DIR: /data
+      PORT: 3000
     volumes:
       - homepage-data:/data
     security_opt:

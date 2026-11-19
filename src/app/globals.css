@@ -371,3 +371,92 @@ input[type="checkbox"] { accent-color: var(--primary); }
     order: var(--mo, 999);
   }
 }
+
+/* ---------- Card style "line": no surface, just a hairline on top ---------- */
+.card[data-style="line"] {
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--border-strong);
+  border-radius: 0;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* ---------- Editorial template (Swiss grid) ---------- */
+.ed-grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  column-gap: 0;
+}
+.ed-lines {
+  position: fixed;
+  inset: 0 var(--page-pad);
+  z-index: -1;
+  pointer-events: none;
+  background-image: linear-gradient(to right, var(--border) 1px, transparent 1px);
+  background-size: calc(100% / 4) 100%;
+}
+@media (min-width: 1024px) {
+  .ed-lines {
+    background-size: calc(100% / 8) 100%;
+  }
+}
+.ed-nav {
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+.ed-tick::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 9px;
+  background: var(--fg);
+}
+.ed-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 120;
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  background: #fff;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  transition: width 0.2s, height 0.2s;
+}
+.ed-gray img {
+  filter: grayscale(1) contrast(1.05);
+  transition: filter calc(0.6s * var(--dur-mult, 1));
+}
+.ed-gray img:hover {
+  filter: none;
+}
+.ed-link {
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.2s;
+}
+.ed-link:hover {
+  text-decoration-color: currentColor;
+}
+.editorial .ed-section-title {
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+}
+.editorial .md,
+.editorial .md p {
+  font-size: 1.05rem;
+}
+.editorial footer {
+  border-color: var(--border-strong);
+  max-width: none !important;
+}

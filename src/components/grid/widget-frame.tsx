@@ -25,6 +25,8 @@ interface Props {
   dragHandle?: HTMLAttributes<HTMLButtonElement>;
   dragging?: boolean;
   mobileOrder?: number;
+  index?: number;
+  total?: number;
 }
 
 function ToolbarButton({ label, onClick, children, danger }: { label: string; onClick: () => void; children: ReactNode; danger?: boolean }) {
@@ -44,7 +46,7 @@ function ToolbarButton({ label, onClick, children, danger }: { label: string; on
   );
 }
 
-export const WidgetFrame = forwardRef<HTMLDivElement, Props>(function WidgetFrame({ widget, config, editMode, isOwner, bento, style, dragHandle, dragging, mobileOrder }, ref) {
+export const WidgetFrame = forwardRef<HTMLDivElement, Props>(function WidgetFrame({ widget, config, editMode, isOwner, bento, style, dragHandle, dragging, mobileOrder, index, total }, ref) {
   const t = useT();
   const locale = useLocale();
   const store = useConfigStore();
@@ -92,48 +94,7 @@ export const WidgetFrame = forwardRef<HTMLDivElement, Props>(function WidgetFram
     window.addEventListener("pointerup", up);
   };
 
-  return (
-    <div
-      ref={(el) => {
-        cellRef.current = el;
-        if (typeof ref === "function") ref(el);
-        else if (ref) ref.current = el;
-      }}
-      id={`w-${widget.id}`}
-      className={cn("widget-cell group/cell relative scroll-mt-24", dragging && "z-50")}
-      data-mobile-hidden={widget.mobile.hidden}
-      style={
-        {
-          ...style,
-          "--w": widget.size.w,
-          "--h": widget.size.h,
-          "--mw": widget.mobile.w,
-          "--mo": mobileOrder ?? 0,
-        } as CSSProperties
-      }
-    >
-      <section
-        aria-labelledby={widget.showTitle ? `t-${widget.id}` : undefined}
-        aria-label={widget.showTitle ? undefined : title}
-        data-style={cardStyle}
-        className={cn(
-          "card flex h-full flex-col",
-          portfolio ? "p-6 sm:p-8" : "p-5",
-          editMode && "edit-outline",
-          editMode && !widget.enabled && "opacity-45",
-          dragging && "dragging-overlay",
-        )}
-      >
-        {(widget.showTitle || editMode) && (
-          <header className={cn("mb-4 flex min-h-7 items-center gap-2", !widget.showTitle && "mb-2")}>
-            {widget.showTitle && (
-              <h2 id={`t-${widget.id}`} className={cn("min-w-0 flex-1 truncate font-heading font-semibold", portfolio ? "text-xl" : "text-[0.95rem]")}>
-                {title}
-              </h2>
-            )}
-            {!widget.showTitle && <span className="flex-1 truncate text-xs font-medium text-subtle">{title}</span>}
-            {isOwner && !editMode && widget.visibility === "private" && <Lock className="size-3.5 text-subtle" aria-label={t.common.private} />}
-            {editMode && (
+  const toolbar = editMode ? (
               <div className="no-print -my-1 -mr-2 flex items-center gap-0.5 rounded-[9px] border border-border bg-surface-solid/80 p-0.5 shadow-sm">
                 {widget.visibility === "private" && <Lock className="mx-1 size-3.5 text-amber-500" aria-label={t.common.private} />}
                 <button
@@ -176,11 +137,101 @@ export const WidgetFrame = forwardRef<HTMLDivElement, Props>(function WidgetFram
                   <Trash2 />
                 </ToolbarButton>
               </div>
+  ) : null;
+
+  const content = <Comp widget={widget} config={config} locale={locale} isOwner={isOwner} editMode={editMode} />;
+  const setRef = (el: HTMLDivElement | null) => {
+    cellRef.current = el;
+    if (typeof ref === "function") ref(el);
+    else if (ref) ref.current = el;
+  };
+
+  // Editorial template: numbered full-width sections – index | large title | content.
+  if (config.layout.template === "editorial") {
+    const wide = widget.size.w >= 3 || !widget.showTitle;
+    const ed = config.layout.editorial;
+    return (
+      <div ref={setRef} id={`w-${widget.id}`} className={cn("widget-cell relative scroll-mt-16", dragging && "z-50")} data-mobile-hidden={widget.mobile.hidden} style={style}>
+        <section
+          aria-labelledby={widget.showTitle ? `t-${widget.id}` : undefined}
+          aria-label={widget.showTitle ? undefined : title}
+          data-style={cardStyle}
+          className={cn("card ed-grid gap-y-8 py-14 sm:py-20", editMode && "edit-outline", editMode && !widget.enabled && "opacity-45", dragging && "dragging-overlay bg-bg")}
+        >
+          <div className="col-span-8 flex items-start justify-between gap-3 lg:col-span-1">
+            {ed.sectionNumbers && index !== undefined && total ? (
+              <span className="tabular text-sm">
+                {String(index + 1).padStart(2, "0")} <span className="text-muted">| {String(total).padStart(2, "0")}</span>
+              </span>
+            ) : (
+              <span />
             )}
+            {isOwner && !editMode && widget.visibility === "private" && <Lock className="size-3.5 text-subtle" aria-label={t.common.private} />}
+          </div>
+          {(widget.showTitle || editMode) && (
+            <header className={cn("col-span-8 flex items-start justify-between gap-4", wide ? "lg:col-span-7" : "lg:col-span-3")}>
+              {widget.showTitle ? (
+                <h2 id={`t-${widget.id}`} className="ed-section-title min-w-0 font-heading text-5xl sm:text-6xl xl:text-7xl">
+                  {title}
+                </h2>
+              ) : (
+                <span className="text-xs text-subtle">{title}</span>
+              )}
+              {toolbar}
+            </header>
+          )}
+          <div className={cn("col-span-8 min-w-0", wide ? "lg:col-span-7 lg:col-start-2" : "lg:col-span-4 lg:col-start-5")}>{content}</div>
+        </section>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      ref={(el) => {
+        cellRef.current = el;
+        if (typeof ref === "function") ref(el);
+        else if (ref) ref.current = el;
+      }}
+      id={`w-${widget.id}`}
+      className={cn("widget-cell group/cell relative scroll-mt-24", dragging && "z-50")}
+      data-mobile-hidden={widget.mobile.hidden}
+      style={
+        {
+          ...style,
+          "--w": widget.size.w,
+          "--h": widget.size.h,
+          "--mw": widget.mobile.w,
+          "--mo": mobileOrder ?? 0,
+        } as CSSProperties
+      }
+    >
+      <section
+        aria-labelledby={widget.showTitle ? `t-${widget.id}` : undefined}
+        aria-label={widget.showTitle ? undefined : title}
+        data-style={cardStyle}
+        className={cn(
+          "card flex h-full flex-col",
+          portfolio ? "p-6 sm:p-8" : "p-5",
+          editMode && "edit-outline",
+          editMode && !widget.enabled && "opacity-45",
+          dragging && "dragging-overlay",
+        )}
+      >
+        {(widget.showTitle || editMode) && (
+          <header className={cn("mb-4 flex min-h-7 items-center gap-2", !widget.showTitle && "mb-2")}>
+            {widget.showTitle && (
+              <h2 id={`t-${widget.id}`} className={cn("min-w-0 flex-1 truncate font-heading font-semibold", portfolio ? "text-xl" : "text-[0.95rem]")}>
+                {title}
+              </h2>
+            )}
+            {!widget.showTitle && <span className="flex-1 truncate text-xs font-medium text-subtle">{title}</span>}
+            {isOwner && !editMode && widget.visibility === "private" && <Lock className="size-3.5 text-subtle" aria-label={t.common.private} />}
+            {toolbar}
           </header>
         )}
         <div className={cn("relative min-h-0 flex-1", bento && "overflow-y-auto")}>
-          <Comp widget={widget} config={config} locale={locale} isOwner={isOwner} editMode={editMode} />
+          {content}
         </div>
         {editMode && (
           <button

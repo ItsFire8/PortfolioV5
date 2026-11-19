@@ -28,6 +28,7 @@ import { AutoSaver } from "./auto-saver";
 import { KeyboardShortcuts } from "./keyboard";
 import { ShortcutsDialog } from "./shortcuts-dialog";
 import { BackgroundTasks } from "./background-tasks";
+import { EditorialShell } from "./editorial";
 
 export interface ShellProps {
   config: SiteConfig;
@@ -107,6 +108,11 @@ function Shell({ user, statsEnabled, maintenance }: ShellProps) {
           </button>
         </div>
       )}
+      {L.template === "editorial" ? (
+        <div id="top" className={cn(editMode && "pb-28")}>
+          <EditorialShell widgets={visible} config={config} isOwner={ownerView} editMode={editMode} user={ownerView ? user : null} />
+        </div>
+      ) : (
       <div id="top" className={cn("relative flex min-h-dvh flex-col", L.template === "portfolio" && "portfolio-template")}>
         <Header widgets={visible} user={ownerView ? user : null} />
         <main
@@ -133,7 +139,8 @@ function Shell({ user, statsEnabled, maintenance }: ShellProps) {
         </main>
         <Footer />
       </div>
-      {L.navigation === "floating" && !editMode && <FloatingNav widgets={visible} />}
+      )}
+      {L.navigation === "floating" && !editMode && L.template !== "editorial" && <FloatingNav widgets={visible} />}
       <CommandPalette />
       <ShortcutsDialog />
       <KeyboardShortcuts />

@@ -90,7 +90,8 @@ export function createDefaultConfig(locale: "de" | "en" = "de"): SiteConfig {
       background: {
         type: "animated",
         themed: true,
-        color: "#0e0d14",
+        color: "#f4f3ef",
+        colorDark: "#0e0d14",
         gradientFrom: "#1e1b4b",
         gradientVia: "#4c1d95",
         gradientTo: "#0f172a",
@@ -121,6 +122,7 @@ export function createDefaultConfig(locale: "de" | "en" = "de"): SiteConfig {
       sidebarWidth: 320,
       header: { show: true, sticky: true, showLogo: true, showSearch: true, showQuickLinks: true },
       footer: { show: true, text: "", showLogin: true },
+      editorial: { heroText: "", tagline: "", showGridLines: true, showCursor: true, grayscaleImages: true, sectionNumbers: true },
       mobile: { columns: 1, customOrder: false, order: [], compactHeader: true },
     },
     widgets,

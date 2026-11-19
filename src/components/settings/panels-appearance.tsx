@@ -112,7 +112,12 @@ export function AppearancePanel() {
             <Field label={bi(locale, "Themenfarbe verwenden (passt sich Hell/Dunkel an)", "Use theme color (adapts to light/dark)")} inline>
               <Switch checked={bg.themed} onChange={(themed) => setBg({ themed })} />
             </Field>
-            {!bg.themed && <ColorInput label={bi(locale, "Hintergrundfarbe", "Background color")} value={bg.color} onChange={(color) => setBg({ color })} />}
+            {!bg.themed && (
+              <div className="grid grid-cols-2 gap-3">
+                <ColorInput label={bi(locale, "Hintergrund hell", "Background light")} value={bg.color} onChange={(color) => setBg({ color })} />
+                <ColorInput label={bi(locale, "Hintergrund dunkel", "Background dark")} value={bg.colorDark} onChange={(colorDark) => setBg({ colorDark })} />
+              </div>
+            )}
           </>
         )}
         {bg.type === "gradient" && (
@@ -155,7 +160,7 @@ export function AppearancePanel() {
       </Section>
       <Section title={t.settings.surfaces}>
         <Field label={bi(locale, "Kartenstil", "Card style")}>
-          <Segmented label="Card" value={a.cardStyle} onChange={(cardStyle) => set({ cardStyle })} options={CARD_STYLES.map((s) => ({ value: s, label: { glass: "Glass", solid: "Solid", outline: "Outline", flat: "Flat" }[s] }))} />
+          <Segmented label="Card" value={a.cardStyle} onChange={(cardStyle) => set({ cardStyle })} options={CARD_STYLES.map((s) => ({ value: s, label: { glass: "Glass", solid: "Solid", outline: "Outline", flat: "Flat", line: "Line" }[s] }))} />
         </Field>
         {a.cardStyle === "glass" && <Slider label={bi(locale, "Glas-Unschärfe", "Glass blur")} value={a.glassBlur} min={0} max={48} unit="px" onChange={(glassBlur) => set({ glassBlur })} />}
         <Slider label={bi(locale, "Deckkraft der Flächen", "Surface opacity")} value={Math.round(a.transparency * 100)} min={0} max={100} unit="%" onChange={(v) => set({ transparency: v / 100 })} />

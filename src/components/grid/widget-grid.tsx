@@ -23,7 +23,7 @@ import { useUIStore } from "@/store/ui-store";
 import { useT } from "@/hooks/use-i18n";
 import { WidgetFrame } from "./widget-frame";
 
-function SortableWidget(props: { widget: WidgetInstance; config: SiteConfig; isOwner: boolean; bento: boolean; mobileOrder?: number }) {
+function SortableWidget(props: { widget: WidgetInstance; config: SiteConfig; isOwner: boolean; bento: boolean; mobileOrder?: number; index?: number; total?: number }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: props.widget.id });
   return (
     <WidgetFrame
@@ -71,8 +71,8 @@ export function WidgetGrid({
   if (!editMode)
     return (
       <div className={gridClass}>
-        {widgets.map((w) => (
-          <WidgetFrame key={w.id} widget={w} config={config} isOwner={isOwner} editMode={false} bento={bento} mobileOrder={mobileOrder?.get(w.id) ?? 999} />
+        {widgets.map((w, i) => (
+          <WidgetFrame key={w.id} widget={w} config={config} isOwner={isOwner} editMode={false} bento={bento} mobileOrder={mobileOrder?.get(w.id) ?? 999} index={i} total={widgets.length} />
         ))}
       </div>
     );
@@ -88,8 +88,8 @@ export function WidgetGrid({
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onStart} onDragEnd={onEnd} onDragCancel={() => setActiveId(null)}>
       <SortableContext items={widgets.map((w) => w.id)} strategy={rectSortingStrategy}>
         <div className={gridClass}>
-          {widgets.map((w) => (
-            <SortableWidget key={w.id} widget={w} config={config} isOwner={isOwner} bento={bento} mobileOrder={mobileOrder?.get(w.id) ?? 999} />
+          {widgets.map((w, i) => (
+            <SortableWidget key={w.id} widget={w} config={config} isOwner={isOwner} bento={bento} mobileOrder={mobileOrder?.get(w.id) ?? 999} index={i} total={widgets.length} />
           ))}
           <div className="widget-cell" style={{ ["--w" as string]: 1, ["--mw" as string]: 2 }}>
             <button

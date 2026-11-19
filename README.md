@@ -6,8 +6,8 @@ Alles (Inhalte, Design, Layout, Widgets) wird über die Oberfläche eingestellt;
 - **20 Widgets**: Profil, Begrüßung, Über mich, Lebenslauf, Fähigkeiten, Projekte, Social Media, Links & Lesezeichen, Suche, Uhr, Wetter, Kalender, Notizen, To-dos, RSS, Galerie, Zitate, Countdown, Kontaktformular, eigene Widgets (Markdown, Einbettung, Bild, Kennzahl)
 - **Live-Editor**: Drag-and-drop, Größe per Ziehen, Duplizieren, Ein-/Ausblenden, Undo/Redo, Autosave
 - **Konfigurationscenter** (Zahnrad): Allgemein, Erscheinung, Layout, Widgets, Schnellzugriffe, Daten
-- **11 Design-Vorlagen**, Light/Dark/AMOLED/System, Glassmorphism, animierte Hintergründe, eigenes CSS
-- **4 Layout-Vorlagen**: Dashboard, Seitenleiste, Portfolio, Bento – plus eigene Mobil-Reihenfolge
+- **12 Design-Vorlagen** (inkl. „Architectural Grid“ im Schweizer Raster-Stil), Light/Dark/AMOLED/System, Glassmorphism, animierte Hintergründe, eigenes CSS
+- **5 Layout-Vorlagen**: Dashboard, Seitenleiste, Portfolio, Bento, Editorial (großer Schriftzug, nummerierte Abschnitte, Rasterlinien) – plus eigene Mobil-Reihenfolge
 - **Admin-Bereich**: Benutzer & Rollen, Medien, Nachrichten, Statistiken, Wartungsmodus, Backups, Besuchervorschau
 - **Öffentlich vs. privat** pro Widget – private Widgets werden serverseitig herausgefiltert und nie ausgeliefert
 - Deutsch & Englisch, Befehlspalette (`Strg + K`), Tastaturkürzel, PWA mit Offline-Cache

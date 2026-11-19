@@ -8,6 +8,7 @@ import type { AppearanceConfig, FontId, LayoutConfig } from "./config/schema";
  */
 
 export const FONT_STACKS: Record<FontId, string> = {
+  grotesk: `"Helvetica Neue", Helvetica, "Inter Variable", Arial, ui-sans-serif, sans-serif`,
   inter: `"Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif`,
   manrope: `"Manrope Variable", "Manrope", ui-sans-serif, system-ui, sans-serif`,
   jakarta: `"Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif`,
@@ -19,6 +20,7 @@ export const FONT_STACKS: Record<FontId, string> = {
 };
 
 export const FONT_LABELS: Record<FontId, string> = {
+  grotesk: "Neo Grotesk (Helvetica)",
   inter: "Inter",
   manrope: "Manrope",
   jakarta: "Plus Jakarta Sans",
@@ -37,7 +39,8 @@ const BASE: Record<Palette, { bg: string; fg: string; muted: string; surface: st
 };
 
 function paletteVars(a: AppearanceConfig, p: Palette): string {
-  const bg = a.background.type === "solid" && !a.background.themed ? a.background.color : BASE[p].bg;
+  const custom = a.background.type === "solid" && !a.background.themed;
+  const bg = custom ? (p === "light" ? a.background.color : p === "amoled" ? "#000000" : a.background.colorDark) : BASE[p].bg;
   // Text colours follow the real background brightness, so a custom dark colour
   // never ends up with dark text (and vice versa).
   const isLightBg = luminance(bg) > 0.3;
@@ -62,7 +65,7 @@ function paletteVars(a: AppearanceConfig, p: Palette): string {
     `--surface-solid:${surface}`,
     `--surface-2:${lightish ? "rgba(23,22,28,0.04)" : "rgba(255,255,255,0.05)"}`,
     `--surface-3:${lightish ? "rgba(23,22,28,0.07)" : "rgba(255,255,255,0.09)"}`,
-    `--border:${style === "flat" ? "transparent" : style === "outline" ? base.borderStrong : base.border}`,
+    `--border:${style === "flat" ? "transparent" : style === "outline" || style === "line" ? base.borderStrong : base.border}`,
     `--border-strong:${base.borderStrong}`,
     `--primary:${primary}`,
     `--primary-fg:${onColor(primary)}`,

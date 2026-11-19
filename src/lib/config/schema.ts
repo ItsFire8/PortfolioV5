@@ -19,6 +19,7 @@ const url = z
 export const LOCALES = ["de", "en"] as const;
 export const THEME_MODES = ["system", "light", "dark", "amoled"] as const;
 export const FONTS = [
+  "grotesk",
   "inter",
   "manrope",
   "jakarta",
@@ -30,9 +31,9 @@ export const FONTS = [
 ] as const;
 export const BACKGROUND_TYPES = ["solid", "gradient", "image", "video", "animated"] as const;
 export const ANIMATED_BACKGROUNDS = ["aurora", "mesh", "grid", "orbs", "noise"] as const;
-export const TEMPLATES = ["dashboard", "sidebar", "portfolio", "bento"] as const;
+export const TEMPLATES = ["dashboard", "sidebar", "portfolio", "bento", "editorial"] as const;
 export const NAV_MODES = ["none", "top", "floating"] as const;
-export const CARD_STYLES = ["glass", "solid", "outline", "flat"] as const;
+export const CARD_STYLES = ["glass", "solid", "outline", "flat", "line"] as const;
 
 export const generalSchema = z.object({
   name: str(120),
@@ -63,7 +64,10 @@ export const appearanceSchema = z.object({
     type: z.enum(BACKGROUND_TYPES),
     /** Use the theme's own base colour (adapts to light/dark) instead of `color`. */
     themed: z.boolean(),
+    /** Solid background in light mode … */
     color: hex,
+    /** … and in dark mode (AMOLED always uses true black). */
+    colorDark: hex,
     gradientFrom: hex,
     gradientVia: hex,
     gradientTo: hex,
@@ -104,6 +108,15 @@ export const layoutSchema = z.object({
     show: z.boolean(),
     text: str(500),
     showLogin: z.boolean(),
+  }),
+  /** Options of the "editorial" template (Swiss grid, oversized display type). */
+  editorial: z.object({
+    heroText: str(40),
+    tagline: str(200),
+    showGridLines: z.boolean(),
+    showCursor: z.boolean(),
+    grayscaleImages: z.boolean(),
+    sectionNumbers: z.boolean(),
   }),
   mobile: z.object({
     columns: z.number().int().min(1).max(2),

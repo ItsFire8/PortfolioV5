@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, LayoutGrid, Newspaper, PanelLeft } from "lucide-react";
+import { Columns3, LayoutDashboard, LayoutGrid, Newspaper, PanelLeft } from "lucide-react";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useLocale, useT } from "@/hooks/use-i18n";
 import { bi } from "@/lib/i18n";
@@ -27,6 +27,7 @@ export function LayoutPanel() {
     { id: "sidebar", icon: PanelLeft, name: bi(locale, "Seitenleiste", "Sidebar"), desc: bi(locale, "Profil links/rechts fixiert", "Sticky profile column") },
     { id: "portfolio", icon: Newspaper, name: "Portfolio", desc: bi(locale, "Abschnitte, editorial", "Sections, editorial") },
     { id: "bento", icon: LayoutGrid, name: "Bento", desc: bi(locale, "Feste Kachelhöhen", "Fixed tile heights") },
+    { id: "editorial", icon: Columns3, name: "Editorial", desc: bi(locale, "Schweizer Raster, großer Schriftzug", "Swiss grid, oversized type") },
   ] as const;
 
   const enabled = c.widgets.filter((w) => w.enabled);
@@ -53,6 +54,28 @@ export function LayoutPanel() {
           ))}
         </div>
       </Section>
+      {L.template === "editorial" && (
+        <Section title="Editorial" description={bi(locale, "Abschnitte erscheinen nummeriert untereinander. Widgets mit Breite ≥ 3 zeigen den Inhalt unter dem Titel, schmalere daneben.", "Sections are stacked and numbered. Widgets with width ≥ 3 show content below the title, narrower ones beside it.")}>
+          <Field label={bi(locale, "Großer Schriftzug", "Display text")} help={bi(locale, "Leer = dein Name. Kurze Wörter wirken am stärksten.", "Empty = your name. Short words work best.")} htmlFor="ed-hero">
+            <Input id="ed-hero" value={L.editorial.heroText} placeholder={c.general.name} maxLength={40} onChange={(e) => set({ editorial: { ...L.editorial, heroText: e.target.value } })} />
+          </Field>
+          <Field label={bi(locale, "Kurzer Leitsatz (links)", "Short tagline (left)")} help={bi(locale, "Rechts steht die Seitenbeschreibung aus „Allgemein“.", "The site description from “General” appears on the right.")} htmlFor="ed-tag">
+            <Input id="ed-tag" value={L.editorial.tagline} maxLength={200} onChange={(e) => set({ editorial: { ...L.editorial, tagline: e.target.value } })} />
+          </Field>
+          {(
+            [
+              ["showGridLines", bi(locale, "Rasterlinien anzeigen", "Show grid lines")],
+              ["sectionNumbers", bi(locale, "Abschnitte nummerieren", "Number sections")],
+              ["grayscaleImages", bi(locale, "Bilder in Graustufen (Farbe beim Überfahren)", "Grayscale images (color on hover)")],
+              ["showCursor", bi(locale, "Cursor-Punkt", "Cursor dot")],
+            ] as const
+          ).map(([k, label]) => (
+            <Field key={k} label={label} inline>
+              <Switch checked={L.editorial[k]} onChange={(v) => set({ editorial: { ...L.editorial, [k]: v } })} />
+            </Field>
+          ))}
+        </Section>
+      )}
       <Section title={t.settings.structure}>
         <Slider label={bi(locale, "Spalten", "Columns")} value={L.columns} min={1} max={6} onChange={(columns) => set({ columns })} />
         <Field label={bi(locale, "Volle Breite", "Full width")} inline>

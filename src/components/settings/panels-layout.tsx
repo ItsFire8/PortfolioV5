@@ -7,7 +7,7 @@ import { bi } from "@/lib/i18n";
 import type { LayoutConfig } from "@/lib/config/schema";
 import { cn } from "@/lib/utils";
 import { useConfigStore } from "@/store/config-store";
-import { Field, Input } from "@/components/ui/input";
+import { Field, Input, Textarea } from "@/components/ui/input";
 import { Section, Segmented } from "@/components/ui/misc";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
@@ -67,6 +67,9 @@ export function LayoutPanel() {
           <Field label={bi(locale, "Objekt-Darstellung", "Object rendering")} help={bi(locale, "Aus = alle Widgets als Papierbogen.", "Off = all widgets as paper sheets.")} inline>
             <Switch checked={L.stage.objects} onChange={(v) => set({ stage: { ...L.stage, objects: v } })} />
           </Field>
+          <Field label={bi(locale, "Mausrad / Wischen wechselt den Bereich", "Mouse wheel / swipe switches section")} inline>
+            <Switch checked={L.stage.scrollNavigate} onChange={(v) => set({ stage: { ...L.stage, scrollNavigate: v } })} />
+          </Field>
           <Field label={bi(locale, "Statusleiste oben", "Status bar on top")} inline>
             <Switch checked={L.stage.showTelemetry} onChange={(v) => set({ stage: { ...L.stage, showTelemetry: v } })} />
           </Field>
@@ -101,12 +104,27 @@ export function LayoutPanel() {
               ["sectionNumbers", bi(locale, "Abschnitte nummerieren", "Number sections")],
               ["grayscaleImages", bi(locale, "Bilder in Graustufen (Farbe beim Überfahren)", "Grayscale images (color on hover)")],
               ["showCursor", bi(locale, "Cursor-Punkt", "Cursor dot")],
+              ["scrollEffects", bi(locale, "Scroll-Effekte (Parallaxe, Einfärben, Aufdecken, fixierte Galerie)", "Scroll effects (parallax, ink-in text, reveals, pinned gallery)")],
             ] as const
           ).map(([k, label]) => (
             <Field key={k} label={label} inline>
               <Switch checked={L.editorial[k]} onChange={(v) => set({ editorial: { ...L.editorial, [k]: v } })} />
             </Field>
           ))}
+          <Field
+            label={bi(locale, "Wortfeld (dunkler Scroll-Abschnitt nach der Einleitung)", "Word field (dark scroll section after the intro)")}
+            help={bi(locale, "Begriffe kommagetrennt, z. B. „Haltung, Form, Licht, Raum“. Leer = aus.", "Comma-separated words, e.g. “Craft, Form, Light, Space”. Empty = off.")}
+            htmlFor="ed-field"
+          >
+            <Input id="ed-field" value={L.editorial.wordField} maxLength={600} onChange={(e) => set({ editorial: { ...L.editorial, wordField: e.target.value } })} />
+          </Field>
+          <Field
+            label={bi(locale, "Manifest (große Wörter vor dem Footer)", "Manifesto (giant words before the footer)")}
+            help={bi(locale, "Eine Zeile pro Bildschirm, z. B. „Wir sehen“ ↵ „Wir fühlen“. Leer = aus. Die Galerie wird automatisch zur fixierten Bildsequenz (Bildunterschrift = großes Wort, Alternativtext = kurzer Text).", "One line per screen, e.g. “We see” ↵ “We feel”. Empty = off. The gallery automatically becomes a pinned image sequence (caption = big word, alt text = short text).")}
+            htmlFor="ed-man"
+          >
+            <Textarea id="ed-man" rows={3} value={L.editorial.manifesto} maxLength={600} onChange={(e) => set({ editorial: { ...L.editorial, manifesto: e.target.value } })} />
+          </Field>
         </Section>
       )}
       <Section title={t.settings.structure}>

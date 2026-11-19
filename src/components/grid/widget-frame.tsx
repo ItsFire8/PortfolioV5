@@ -5,13 +5,14 @@ import { forwardRef, useRef, type CSSProperties, type HTMLAttributes, type React
 import { useT, useLocale } from "@/hooks/use-i18n";
 import { tl } from "@/lib/i18n";
 import type { SiteConfig, WidgetInstance } from "@/lib/config/schema";
-import { cn } from "@/lib/utils";
+import { cn, safeUrl } from "@/lib/utils";
 import { useConfigStore, useConfigStoreApi } from "@/store/config-store";
 import { useUIStore } from "@/store/ui-store";
 import { confirmDialog } from "@/components/ui/confirm";
 import { getWidgetDefinition } from "@/widgets/definitions";
 import { WIDGET_COMPONENTS } from "@/widgets/components";
 import { Icon } from "@/components/icon";
+import { PinnedStory, Reveal, SlideTitle, useMotionOK } from "@/components/editorial/scroll-fx";
 
 export const widgetTitle = (w: WidgetInstance, locale: "de" | "en") => w.title || tl(getWidgetDefinition(w.type)?.name, locale);
 
@@ -55,6 +56,7 @@ export const WidgetFrame = forwardRef<HTMLDivElement, Props>(function WidgetFram
   const cellRef = useRef<HTMLDivElement | null>(null);
   const def = getWidgetDefinition(widget.type);
   const Comp = WIDGET_COMPONENTS[widget.type];
+  const motionOK = useMotionOK();
   if (!def || !Comp) return null;
   const cardStyle = widget.style === "inherit" ? config.appearance.cardStyle : widget.style;
   const title = widgetTitle(widget, locale);
@@ -150,6 +152,16 @@ export const WidgetFrame = forwardRef<HTMLDivElement, Props>(function WidgetFram
   if (config.layout.template === "editorial") {
     const wide = widget.size.w >= 3 || !widget.showTitle;
     const ed = config.layout.editorial;
+    const fx = ed.scrollEffects && motionOK && !editMode && !dragging;
+    const story = ((widget.settings.images as { src?: string; caption?: string; alt?: string }[] | undefined) ?? []).filter((i) => safeUrl(i.src));
+    // Gallery becomes a pinned, full-bleed image story while scrolling.
+    if (fx && widget.type === "gallery" && story.length) {
+      return (
+        <div ref={setRef} id={`w-${widget.id}`} className="widget-cell relative" data-mobile-hidden={widget.mobile.hidden} style={style}>
+          <PinnedStory images={story} label={title} />
+        </div>
+      );
+    }
     return (
       <div ref={setRef} id={`w-${widget.id}`} className={cn("widget-cell relative scroll-mt-16", dragging && "z-50")} data-mobile-hidden={widget.mobile.hidden} style={style}>
         <section
@@ -171,16 +183,22 @@ export const WidgetFrame = forwardRef<HTMLDivElement, Props>(function WidgetFram
           {(widget.showTitle || editMode) && (
             <header className={cn("col-span-8 flex items-start justify-between gap-4", wide ? "lg:col-span-7" : "lg:col-span-3")}>
               {widget.showTitle ? (
-                <h2 id={`t-${widget.id}`} className="ed-section-title min-w-0 font-heading text-5xl sm:text-6xl xl:text-7xl">
-                  {title}
-                </h2>
+                fx ? (
+                  <SlideTitle id={`t-${widget.id}`} className="ed-section-title min-w-0 font-heading text-5xl sm:text-6xl xl:text-7xl">
+                    {title}
+                  </SlideTitle>
+                ) : (
+                  <h2 id={`t-${widget.id}`} className="ed-section-title min-w-0 font-heading text-5xl sm:text-6xl xl:text-7xl">
+                    {title}
+                  </h2>
+                )
               ) : (
                 <span className="text-xs text-subtle">{title}</span>
               )}
               {toolbar}
             </header>
           )}
-          <div className={cn("col-span-8 min-w-0", wide ? "lg:col-span-7 lg:col-start-2" : "lg:col-span-4 lg:col-start-5")}>{content}</div>
+          <div className={cn("col-span-8 min-w-0", wide ? "lg:col-span-7 lg:col-start-2" : "lg:col-span-4 lg:col-start-5")}>{fx ? <Reveal>{content}</Reveal> : content}</div>
         </section>
       </div>
     );

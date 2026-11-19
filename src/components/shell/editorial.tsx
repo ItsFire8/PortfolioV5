@@ -11,11 +11,24 @@ import { useUIStore } from "@/store/ui-store";
 import { WidgetGrid } from "@/components/grid/widget-grid";
 import { useNavItems } from "./header";
 import { Footer } from "./footer";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { Manifesto, ScrubText, WordField, useMotionOK } from "@/components/editorial/scroll-fx";
 
 const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 /** Oversized display line: letters are spread across the full width and scaled to fit. */
-function Hero({ text }: { text: string }) {
+/** One display letter that drifts upwards at its own speed while the page scrolls. */
+function HeroChar({ c, i, scrollY, on }: { c: string; i: number; scrollY: MotionValue<number>; on: boolean }) {
+  const y = useTransform(scrollY, [0, 700], [0, -(90 + ((i * 37) % 5) * 45)]);
+  return (
+    <motion.span aria-hidden style={on ? { y } : undefined} className="inline-block">
+      {c === " " ? "\u00a0" : c}
+    </motion.span>
+  );
+}
+
+function Hero({ text, fx }: { text: string; fx: boolean }) {
+  const { scrollY } = useScroll();
   const box = useRef<HTMLDivElement>(null);
   const probe = useRef<HTMLSpanElement>(null);
   const [size, setSize] = useState<number | null>(null);
@@ -47,9 +60,7 @@ function Hero({ text }: { text: string }) {
         style={{ fontSize: size ?? "clamp(3rem, 14vw, 15rem)", opacity: size ? 1 : 0, transition: "opacity .4s" }}
       >
         {chars.map((c, i) => (
-          <span key={i} aria-hidden>
-            {c === " " ? " " : c}
-          </span>
+          <HeroChar key={i} c={c} i={i} scrollY={scrollY} on={fx} />
         ))}
       </h1>
     </div>
@@ -108,6 +119,14 @@ export function EditorialShell({ widgets, config, isOwner, editMode, user }: { w
   }, [nav.map((n) => n.id).join()]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const heroText = ed.heroText || g.name || g.siteTitle;
+  const motionOK = useMotionOK();
+  const fx = ed.scrollEffects && motionOK;
+  const fieldWords = ed.wordField.split(",").map((w) => w.trim()).filter(Boolean).slice(0, 24);
+  const manifesto = ed.manifesto
+    .split("\n")
+    .map((l) => l.trim().split(/\s+/).filter(Boolean))
+    .filter((l) => l.length)
+    .slice(0, 8);
   const statement = g.description;
   const invert = () => ui.setThemeOverride(ui.resolvedTheme === "light" ? "dark" : "light");
 
@@ -132,11 +151,11 @@ export function EditorialShell({ widgets, config, isOwner, editMode, user }: { w
   );
 
   return (
-    <div className={cn("editorial relative flex min-h-dvh flex-col", ed.grayscaleImages && "ed-gray")}>
+    <div className={cn("editorial relative flex min-h-dvh flex-col", ed.grayscaleImages && "ed-gray", fx && "ed-fx")}>
       {ed.showGridLines && <div className="ed-lines" aria-hidden />}
       {ed.showCursor && config.appearance.animationSpeed > 0 && <CursorDot />}
 
-      <div className="px-[var(--page-pad)] pt-[calc(var(--page-pad)*0.5)]">{heroText && <Hero text={heroText} />}</div>
+      <div className="px-[var(--page-pad)] pt-[calc(var(--page-pad)*0.5)]">{heroText && <Hero text={heroText} fx={fx} />}</div>
 
       <nav aria-label="Main" className="ed-nav sticky top-0 z-40 mt-6 px-[var(--page-pad)]">
         <div className="ed-grid items-start py-4">
@@ -170,15 +189,19 @@ export function EditorialShell({ widgets, config, isOwner, editMode, user }: { w
 
       <section className="ed-grid relative min-h-[62vh] px-[var(--page-pad)] pb-10 pt-8" aria-label={L("Einleitung", "Introduction")}>
         <p className="col-span-8 max-w-56 text-sm leading-snug lg:col-span-2 lg:col-start-2">{ed.tagline}</p>
-        {statement && <p className="col-span-8 mt-10 max-w-xl text-3xl leading-[1.12] tracking-[-0.01em] sm:text-4xl lg:col-span-3 lg:col-start-6 lg:mt-0">{statement}</p>}
+        {statement && <ScrubText text={statement} className="col-span-8 mt-10 max-w-xl text-3xl leading-[1.12] tracking-[-0.01em] sm:text-4xl lg:col-span-3 lg:col-start-6 lg:mt-0" />}
         <a href="#main" className="absolute bottom-6 hidden items-end gap-3 text-sm lg:flex" style={{ left: "calc(var(--page-pad) + (100% - var(--page-pad) * 2) / 8 * 5)" }}>
           <span className="h-16 w-px bg-fg" aria-hidden /> {L("Scrollen zum Entdecken", "Scroll to discover")}
         </a>
       </section>
 
+      {fx && !editMode && fieldWords.length > 0 && <WordField words={fieldWords} />}
+
       <main id="main" className="w-full flex-1 px-[var(--page-pad)]">
         <WidgetGrid widgets={widgets} config={config} isOwner={isOwner} editMode={editMode} single />
       </main>
+
+      {fx && !editMode && manifesto.length > 0 && <Manifesto lines={manifesto} />}
 
       <Footer />
 

@@ -117,6 +117,12 @@ export const layoutSchema = z.object({
     showCursor: z.boolean(),
     grayscaleImages: z.boolean(),
     sectionNumbers: z.boolean(),
+    /** Scroll-linked effects (hero parallax, text scrub, image reveals, pinned gallery). */
+    scrollEffects: z.boolean(),
+    /** Optional dark "word field" after the intro – words separated by commas. */
+    wordField: str(600),
+    /** Optional kinetic manifesto before the footer – one line per row, words separated by spaces. */
+    manifesto: str(600),
   }),
   /** Options of the "stage" template (one tactile object per section). */
   stage: z.object({
@@ -124,6 +130,8 @@ export const layoutSchema = z.object({
     objects: z.boolean(),
     transition: z.enum(["tear", "fade", "none"]),
     halo: z.boolean(),
+    /** Mouse wheel / swipe switches sections. */
+    scrollNavigate: z.boolean(),
   }),
   mobile: z.object({
     columns: z.number().int().min(1).max(2),

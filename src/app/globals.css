@@ -586,3 +586,20 @@ input[type="checkbox"] { accent-color: var(--primary); }
   -webkit-mask: var(--z);
   mask: var(--z);
 }
+
+/* Editorial scroll effects: images are uncovered from the bottom (progressive enhancement,
+   browsers without scroll-driven animations simply show the image). */
+@supports (animation-timeline: view()) {
+  .ed-fx .ed-grid img:not(.no-reveal) {
+    animation: ed-uncover linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 38%;
+  }
+}
+@keyframes ed-uncover {
+  from { clip-path: inset(100% 0 0 0); scale: 1.12; }
+  to { clip-path: inset(0 0 0 0); scale: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-fx .ed-grid img { animation: none !important; }
+}

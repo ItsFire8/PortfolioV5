@@ -106,6 +106,58 @@ export function StageShell({ widgets, config, isOwner, editMode }: { widgets: Wi
     return () => window.removeEventListener("keydown", onKey);
   }, [go, idx, editMode]);
 
+  // Scroll navigation: wheel / swipe moves to the next or previous section – unless the
+  // pointer is over something that can still scroll itself (letter, sheet, project wheel).
+  const mainRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = mainRef.current;
+    if (!el || editMode || !st.scrollNavigate) return;
+    let acc = 0;
+    let last = 0;
+    const canScroll = (target: EventTarget | null, dy: number) => {
+      for (let n = target as HTMLElement | null; n && n !== el; n = n.parentElement) {
+        if (n.getAttribute("role") === "listbox") return true;
+        const oy = getComputedStyle(n).overflowY;
+        if ((oy === "auto" || oy === "scroll") && n.scrollHeight > n.clientHeight + 2) {
+          if (dy > 0 && n.scrollTop + n.clientHeight < n.scrollHeight - 2) return true;
+          if (dy < 0 && n.scrollTop > 2) return true;
+        }
+      }
+      return false;
+    };
+    const step = (dy: number) => {
+      const t = Date.now();
+      if (t - last < 1100) return;
+      last = t;
+      acc = 0;
+      go(idx + (dy > 0 ? 1 : -1));
+    };
+    const onWheel = (e: WheelEvent) => {
+      if (document.querySelector("[aria-modal=true]") || canScroll(e.target, e.deltaY)) return;
+      e.preventDefault();
+      acc += e.deltaY;
+      if (Math.abs(acc) > 60) step(acc);
+    };
+    let startY = 0;
+    let startTarget: EventTarget | null = null;
+    const onTouchStart = (e: TouchEvent) => {
+      startY = e.touches[0].clientY;
+      startTarget = e.target;
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      const dy = startY - e.changedTouches[0].clientY;
+      if (Math.abs(dy) > 70 && !canScroll(startTarget, dy)) step(dy);
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [go, idx, editMode, st.scrollNavigate]);
+
   const title = cur ? widgetTitle(cur, locale) : config.general.siteTitle;
   const initial = (config.general.name || config.general.siteTitle || "·").charAt(0).toUpperCase();
   const dark = ui.resolvedTheme !== "light";
@@ -159,7 +211,7 @@ export function StageShell({ widgets, config, isOwner, editMode }: { widgets: Wi
         </div>
       </header>
 
-      <main id="main" className="relative flex flex-1 items-center justify-center px-[var(--page-pad)] py-10">
+      <main ref={mainRef} id="main" className="relative flex flex-1 items-center justify-center px-[var(--page-pad)] py-10">
         {editMode ? (
           <div className="w-full max-w-3xl pb-24">
             <WidgetGrid widgets={widgets} config={config} isOwner={isOwner} editMode single />

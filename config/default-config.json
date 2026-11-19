@@ -1,0 +1,584 @@
+{
+  "format": "homepage-config",
+  "version": 1,
+  "config": {
+    "version": 1,
+    "general": {
+      "name": "",
+      "username": "",
+      "siteTitle": "Meine Homepage",
+      "description": "Persönliche Website & Dashboard",
+      "avatar": "",
+      "logo": "",
+      "favicon": "",
+      "locale": "de",
+      "timezone": "Europe/Berlin",
+      "dateFormat": "long",
+      "timeFormat": "24h",
+      "showSeconds": false
+    },
+    "appearance": {
+      "preset": "glassmorphism",
+      "mode": "system",
+      "primary": "#e0569f",
+      "secondary": "#8b8aa8",
+      "accent": "#4f8ff7",
+      "font": "jakarta",
+      "headingFont": "jakarta",
+      "fontSize": 16,
+      "cardStyle": "glass",
+      "background": {
+        "type": "animated",
+        "themed": true,
+        "color": "#0e0d14",
+        "gradientFrom": "#1e1b4b",
+        "gradientVia": "#4c1d95",
+        "gradientTo": "#0f172a",
+        "gradientAngle": 135,
+        "image": "",
+        "video": "",
+        "animated": "aurora",
+        "overlay": 0.15,
+        "blur": 0
+      },
+      "glassBlur": 24,
+      "transparency": 0.55,
+      "radius": 20,
+      "shadow": 0.25,
+      "animationSpeed": 1,
+      "customCss": ""
+    },
+    "layout": {
+      "template": "dashboard",
+      "columns": 4,
+      "maxWidth": 1280,
+      "fullWidth": false,
+      "gap": 16,
+      "padding": 24,
+      "rowHeight": 140,
+      "navigation": "none",
+      "sidebarPosition": "left",
+      "sidebarWidth": 320,
+      "header": {
+        "show": true,
+        "sticky": true,
+        "showLogo": true,
+        "showSearch": true,
+        "showQuickLinks": true
+      },
+      "footer": {
+        "show": true,
+        "text": "",
+        "showLogin": true
+      },
+      "mobile": {
+        "columns": 1,
+        "customOrder": false,
+        "order": [],
+        "compactHeader": true
+      }
+    },
+    "widgets": [
+      {
+        "id": "greeting",
+        "type": "greeting",
+        "title": "",
+        "showTitle": false,
+        "enabled": true,
+        "visibility": "public",
+        "region": "sidebar",
+        "size": {
+          "w": 3,
+          "h": 1
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 2
+        },
+        "style": "inherit",
+        "showInNav": false,
+        "settings": {
+          "message": "",
+          "showAvatar": true,
+          "showDate": true,
+          "style": "large"
+        }
+      },
+      {
+        "id": "clock",
+        "type": "clock",
+        "title": "",
+        "showTitle": false,
+        "enabled": true,
+        "visibility": "public",
+        "region": "main",
+        "size": {
+          "w": 1,
+          "h": 1
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 1
+        },
+        "style": "inherit",
+        "showInNav": false,
+        "settings": {
+          "variant": "digital",
+          "timezone": "",
+          "showDate": true,
+          "zones": []
+        }
+      },
+      {
+        "id": "search",
+        "type": "search",
+        "title": "",
+        "showTitle": false,
+        "enabled": true,
+        "visibility": "public",
+        "region": "main",
+        "size": {
+          "w": 4,
+          "h": 1
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 2
+        },
+        "style": "inherit",
+        "showInNav": false,
+        "settings": {
+          "engine": "duckduckgo",
+          "customUrl": "",
+          "newTab": false,
+          "allowSwitch": true,
+          "suggestBookmarks": true
+        }
+      },
+      {
+        "id": "profile",
+        "type": "profile",
+        "title": "",
+        "showTitle": false,
+        "enabled": true,
+        "visibility": "public",
+        "region": "sidebar",
+        "size": {
+          "w": 2,
+          "h": 2
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 2
+        },
+        "style": "inherit",
+        "showInNav": false,
+        "settings": {
+          "role": "",
+          "location": "",
+          "bio": "",
+          "status": "",
+          "statusColor": "#22c55e",
+          "showSocial": true,
+          "buttons": []
+        }
+      },
+      {
+        "id": "about",
+        "type": "about",
+        "title": "",
+        "showTitle": true,
+        "enabled": true,
+        "visibility": "public",
+        "region": "main",
+        "size": {
+          "w": 2,
+          "h": 2
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 2
+        },
+        "style": "inherit",
+        "showInNav": true,
+        "settings": {
+          "content": "",
+          "image": ""
+        }
+      },
+      {
+        "id": "links",
+        "type": "links",
+        "title": "",
+        "showTitle": true,
+        "enabled": true,
+        "visibility": "public",
+        "region": "main",
+        "size": {
+          "w": 2,
+          "h": 2
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 2
+        },
+        "style": "inherit",
+        "showInNav": false,
+        "settings": {
+          "layout": "grid",
+          "newTab": true,
+          "showFavicons": false,
+          "categories": []
+        }
+      },
+      {
+        "id": "todo",
+        "type": "todo",
+        "title": "",
+        "showTitle": true,
+        "enabled": true,
+        "visibility": "private",
+        "region": "main",
+        "size": {
+          "w": 1,
+          "h": 2
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 1
+        },
+        "style": "inherit",
+        "showInNav": false,
+        "settings": {
+          "storage": "server",
+          "showCompleted": true
+        }
+      },
+      {
+        "id": "notes",
+        "type": "notes",
+        "title": "",
+        "showTitle": true,
+        "enabled": true,
+        "visibility": "private",
+        "region": "main",
+        "size": {
+          "w": 1,
+          "h": 2
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 2
+        },
+        "style": "inherit",
+        "showInNav": false,
+        "settings": {
+          "storage": "server"
+        }
+      },
+      {
+        "id": "skills",
+        "type": "skills",
+        "title": "",
+        "showTitle": true,
+        "enabled": true,
+        "visibility": "public",
+        "region": "main",
+        "size": {
+          "w": 2,
+          "h": 2
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 2
+        },
+        "style": "inherit",
+        "showInNav": true,
+        "settings": {
+          "display": "bars",
+          "groupByCategory": true,
+          "items": []
+        }
+      },
+      {
+        "id": "projects",
+        "type": "projects",
+        "title": "",
+        "showTitle": true,
+        "enabled": true,
+        "visibility": "public",
+        "region": "main",
+        "size": {
+          "w": 4,
+          "h": 2
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 2
+        },
+        "style": "inherit",
+        "showInNav": true,
+        "settings": {
+          "layout": "grid",
+          "filterByTag": true,
+          "items": []
+        }
+      },
+      {
+        "id": "resume",
+        "type": "resume",
+        "title": "",
+        "showTitle": true,
+        "enabled": true,
+        "visibility": "public",
+        "region": "main",
+        "size": {
+          "w": 2,
+          "h": 3
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 2
+        },
+        "style": "inherit",
+        "showInNav": true,
+        "settings": {
+          "items": [],
+          "cvFile": "",
+          "downloadLabel": ""
+        }
+      },
+      {
+        "id": "social",
+        "type": "social",
+        "title": "",
+        "showTitle": true,
+        "enabled": true,
+        "visibility": "public",
+        "region": "sidebar",
+        "size": {
+          "w": 1,
+          "h": 1
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 1
+        },
+        "style": "inherit",
+        "showInNav": false,
+        "settings": {
+          "style": "icons",
+          "items": []
+        }
+      },
+      {
+        "id": "calendar",
+        "type": "calendar",
+        "title": "",
+        "showTitle": true,
+        "enabled": true,
+        "visibility": "public",
+        "region": "main",
+        "size": {
+          "w": 1,
+          "h": 2
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 1
+        },
+        "style": "inherit",
+        "showInNav": false,
+        "settings": {
+          "weekStart": "monday",
+          "showUpcoming": true,
+          "events": []
+        }
+      },
+      {
+        "id": "quote",
+        "type": "quote",
+        "title": "",
+        "showTitle": false,
+        "enabled": true,
+        "visibility": "public",
+        "region": "main",
+        "size": {
+          "w": 2,
+          "h": 1
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 2
+        },
+        "style": "inherit",
+        "showInNav": false,
+        "settings": {
+          "mode": "daily",
+          "interval": 20,
+          "items": [
+            {
+              "text": "Simplicity is the ultimate sophistication.",
+              "author": "Leonardo da Vinci"
+            },
+            {
+              "text": "Was immer du tun kannst oder träumst es zu können, fang damit an.",
+              "author": "Johann Wolfgang von Goethe"
+            },
+            {
+              "text": "The best way to predict the future is to invent it.",
+              "author": "Alan Kay"
+            },
+            {
+              "text": "Wer immer tut, was er schon kann, bleibt immer das, was er schon ist.",
+              "author": "Henry Ford"
+            },
+            {
+              "text": "Make it work, make it right, make it fast.",
+              "author": "Kent Beck"
+            }
+          ]
+        }
+      },
+      {
+        "id": "countdown",
+        "type": "countdown",
+        "title": "",
+        "showTitle": false,
+        "enabled": true,
+        "visibility": "public",
+        "region": "main",
+        "size": {
+          "w": 2,
+          "h": 1
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 2
+        },
+        "style": "inherit",
+        "showInNav": false,
+        "settings": {
+          "label": "",
+          "target": "",
+          "doneText": "",
+          "showSeconds": true,
+          "yearly": false
+        }
+      },
+      {
+        "id": "contact",
+        "type": "contact",
+        "title": "",
+        "showTitle": true,
+        "enabled": true,
+        "visibility": "public",
+        "region": "main",
+        "size": {
+          "w": 2,
+          "h": 2
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 2
+        },
+        "style": "inherit",
+        "showInNav": true,
+        "settings": {
+          "intro": "",
+          "successMessage": "",
+          "showSubject": true,
+          "email": ""
+        }
+      },
+      {
+        "id": "weather",
+        "type": "weather",
+        "title": "",
+        "showTitle": true,
+        "enabled": false,
+        "visibility": "public",
+        "region": "main",
+        "size": {
+          "w": 1,
+          "h": 1
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 1
+        },
+        "style": "inherit",
+        "showInNav": false,
+        "settings": {
+          "location": "",
+          "latitude": 0,
+          "longitude": 0,
+          "units": "metric",
+          "showForecast": true,
+          "days": 4
+        }
+      },
+      {
+        "id": "rss",
+        "type": "rss",
+        "title": "",
+        "showTitle": true,
+        "enabled": false,
+        "visibility": "public",
+        "region": "main",
+        "size": {
+          "w": 2,
+          "h": 2
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 2
+        },
+        "style": "inherit",
+        "showInNav": false,
+        "settings": {
+          "feeds": [],
+          "maxItems": 8,
+          "showSource": true,
+          "showDate": true
+        }
+      },
+      {
+        "id": "gallery",
+        "type": "gallery",
+        "title": "",
+        "showTitle": true,
+        "enabled": false,
+        "visibility": "public",
+        "region": "main",
+        "size": {
+          "w": 2,
+          "h": 2
+        },
+        "mobile": {
+          "hidden": false,
+          "w": 2
+        },
+        "style": "inherit",
+        "showInNav": true,
+        "settings": {
+          "columns": 3,
+          "aspect": "square",
+          "images": []
+        }
+      }
+    ],
+    "quickLinks": [],
+    "seo": {
+      "keywords": "",
+      "ogImage": "",
+      "indexable": true
+    },
+    "features": {
+      "pwa": true,
+      "commandPalette": true,
+      "shortcuts": true,
+      "visitorThemeToggle": true
+    }
+  }
+}

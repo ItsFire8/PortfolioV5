@@ -21,6 +21,7 @@
   --color-accent-soft: var(--accent-soft);
   --font-sans: var(--font-body);
   --font-heading: var(--font-heading);
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
   --radius-card: var(--radius);
   --radius-ui: var(--radius-sm);
   --radius-lg-card: var(--radius-lg);
@@ -459,4 +460,129 @@ input[type="checkbox"] { accent-color: var(--primary); }
 .editorial footer {
   border-color: var(--border-strong);
   max-width: none !important;
+}
+
+/* ---------- Stage template (tactile objects) ---------- */
+.stage-line {
+  border-color: color-mix(in srgb, var(--fg) 12%, transparent);
+}
+.stage-texture {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(color-mix(in srgb, var(--fg) 7%, transparent) 0.6px, transparent 0.8px);
+  background-size: 4px 4px;
+}
+.stage-halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(78vh, 90vw);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 9999px;
+  pointer-events: none;
+  background-image: radial-gradient(color-mix(in srgb, var(--fg) 45%, transparent) 0.9px, transparent 1.2px);
+  background-size: 5px 5px;
+  -webkit-mask: radial-gradient(circle, transparent 54%, #000 62%, #000 66%, transparent 74%);
+  mask: radial-gradient(circle, transparent 54%, #000 62%, #000 66%, transparent 74%);
+  opacity: 0.55;
+  animation: halo-spin calc(90s * var(--dur-mult, 1)) linear infinite;
+}
+@keyframes halo-spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.stage-paper {
+  background: color-mix(in srgb, var(--bg) 92%, #fff);
+  background-image: radial-gradient(rgba(0, 0, 0, 0.035) 0.6px, transparent 0.8px);
+  background-size: 3px 3px;
+}
+/* Perforated stamp edge: a ring of "holes" in the card colour only along the border */
+.stage-stamp {
+  position: relative;
+  padding: 10px;
+  background: #f1f0eb;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.4));
+}
+.stage-stamp::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  padding: 7px;
+  background: radial-gradient(circle, #363635 3.6px, transparent 4.1px) 1px 1px / 12px 12px;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+.stage-strap {
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 6px, rgba(255, 255, 255, 0.06) 6px 7px) 3px 0 / 1px 100% no-repeat,
+    repeating-linear-gradient(to bottom, transparent 0 6px, rgba(255, 255, 255, 0.06) 6px 7px) calc(100% - 3px) 0 / 1px 100% no-repeat,
+    linear-gradient(90deg, #151515, #262626 50%, #151515);
+}
+.stage-swing {
+  transform-origin: 50% 0;
+  animation: swing calc(5s * var(--dur-mult, 1)) ease-in-out infinite alternate;
+}
+.stage-swing:hover {
+  animation-play-state: paused;
+}
+@keyframes swing {
+  from { transform: rotate(-2.2deg); }
+  to { transform: rotate(2.2deg); }
+}
+.stage-book {
+  perspective: 1400px;
+  display: block;
+}
+.stage-book-inner {
+  position: relative;
+  display: block;
+  width: min(270px, 70vw);
+  aspect-ratio: 3 / 4;
+  transform-style: preserve-3d;
+  transform: rotateY(-22deg) rotateX(4deg);
+  transition: transform calc(0.6s * var(--dur-mult, 1)) cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.stage-book:hover .stage-book-inner,
+.stage-book:focus-visible .stage-book-inner {
+  transform: rotateY(-8deg) rotateX(2deg) translateY(-6px);
+}
+.stage-book-cover {
+  position: absolute;
+  inset: 0;
+  border-radius: 4px 10px 10px 4px;
+  box-shadow: inset 6px 0 10px -6px rgba(0, 0, 0, 0.35), 0 40px 70px -25px rgba(0, 0, 0, 0.85);
+}
+.stage-book-pages {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  right: -14px;
+  width: 16px;
+  border-radius: 0 4px 4px 0;
+  background: repeating-linear-gradient(to right, #d8d6cf 0 1px, #bdbbb4 1px 2px);
+  transform: rotateY(60deg);
+  transform-origin: left;
+}
+.stage-book-ribbon {
+  position: absolute;
+  right: -10px;
+  top: 46%;
+  width: 16px;
+  height: 26px;
+  background: #4a4a48;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+.stage-ruled {
+  line-height: 28px;
+  background-image: linear-gradient(to bottom, transparent 27px, rgba(0, 0, 0, 0.18) 27px);
+  background-size: 100% 28px;
+}
+.stage-ticket {
+  --z: conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / 10px 6px repeat-x, linear-gradient(#000 0 0) 0 6px / 100% calc(100% - 6px) no-repeat;
+  -webkit-mask: var(--z);
+  mask: var(--z);
 }

@@ -31,7 +31,7 @@ export const FONTS = [
 ] as const;
 export const BACKGROUND_TYPES = ["solid", "gradient", "image", "video", "animated"] as const;
 export const ANIMATED_BACKGROUNDS = ["aurora", "mesh", "grid", "orbs", "noise"] as const;
-export const TEMPLATES = ["dashboard", "sidebar", "portfolio", "bento", "editorial"] as const;
+export const TEMPLATES = ["dashboard", "sidebar", "portfolio", "bento", "editorial", "stage"] as const;
 export const NAV_MODES = ["none", "top", "floating"] as const;
 export const CARD_STYLES = ["glass", "solid", "outline", "flat", "line"] as const;
 
@@ -117,6 +117,13 @@ export const layoutSchema = z.object({
     showCursor: z.boolean(),
     grayscaleImages: z.boolean(),
     sectionNumbers: z.boolean(),
+  }),
+  /** Options of the "stage" template (one tactile object per section). */
+  stage: z.object({
+    showTelemetry: z.boolean(),
+    objects: z.boolean(),
+    transition: z.enum(["tear", "fade", "none"]),
+    halo: z.boolean(),
   }),
   mobile: z.object({
     columns: z.number().int().min(1).max(2),

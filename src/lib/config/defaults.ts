@@ -123,6 +123,7 @@ export function createDefaultConfig(locale: "de" | "en" = "de"): SiteConfig {
       header: { show: true, sticky: true, showLogo: true, showSearch: true, showQuickLinks: true },
       footer: { show: true, text: "", showLogin: true },
       editorial: { heroText: "", tagline: "", showGridLines: true, showCursor: true, grayscaleImages: true, sectionNumbers: true },
+      stage: { showTelemetry: true, objects: true, transition: "tear", halo: true },
       mobile: { columns: 1, customOrder: false, order: [], compactHeader: true },
     },
     widgets,

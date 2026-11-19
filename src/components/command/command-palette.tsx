@@ -85,7 +85,12 @@ export function CommandPalette() {
         group: t.palette.navigation,
         label: widgetTitle(w, locale),
         icon: ArrowRight,
-        run: go(() => document.getElementById(`w-${w.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })),
+        run: go(() => {
+          const el = document.getElementById(`w-${w.id}`);
+          // Templates that show one section at a time (stage) react to the hash instead.
+          if (el && config.layout.template !== "stage") el.scrollIntoView({ behavior: "smooth", block: "start" });
+          else window.location.hash = `w-${w.id}`;
+        }),
       }));
     const links: Item[] = collectBookmarks(config).map((b, i) => ({
       id: `b-${i}`,

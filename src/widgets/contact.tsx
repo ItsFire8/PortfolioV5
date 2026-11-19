@@ -3,6 +3,7 @@
 import { CheckCircle2, Send } from "lucide-react";
 import { useRef, useState } from "react";
 import { useT } from "@/hooks/use-i18n";
+import { sendContactMessage } from "@/lib/contact";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
 import type { WidgetProps } from "./types";
@@ -21,19 +22,14 @@ export default function Contact({ widget }: WidgetProps<S>) {
     const f = new FormData(e.currentTarget);
     setState("sending");
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          name: f.get("name"),
-          email: f.get("email"),
-          subject: f.get("subject") ?? "",
-          message: f.get("message"),
-          website: f.get("website"),
-          t: renderedAt.current,
-        }),
+      await sendContactMessage({
+        name: String(f.get("name") ?? ""),
+        email: String(f.get("email") ?? ""),
+        subject: String(f.get("subject") ?? ""),
+        message: String(f.get("message") ?? ""),
+        website: String(f.get("website") ?? ""),
+        renderedAt: renderedAt.current,
       });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? res.statusText);
       setState("done");
     } catch (err) {
       setError((err as Error).message);

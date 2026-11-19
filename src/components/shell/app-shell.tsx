@@ -29,6 +29,7 @@ import { KeyboardShortcuts } from "./keyboard";
 import { ShortcutsDialog } from "./shortcuts-dialog";
 import { BackgroundTasks } from "./background-tasks";
 import { EditorialShell } from "./editorial";
+import { StageShell } from "./stage";
 
 export interface ShellProps {
   config: SiteConfig;
@@ -108,7 +109,11 @@ function Shell({ user, statsEnabled, maintenance }: ShellProps) {
           </button>
         </div>
       )}
-      {L.template === "editorial" ? (
+      {L.template === "stage" ? (
+        <div id="top">
+          <StageShell widgets={visible} config={config} isOwner={ownerView} editMode={editMode} />
+        </div>
+      ) : L.template === "editorial" ? (
         <div id="top" className={cn(editMode && "pb-28")}>
           <EditorialShell widgets={visible} config={config} isOwner={ownerView} editMode={editMode} user={ownerView ? user : null} />
         </div>
@@ -140,7 +145,7 @@ function Shell({ user, statsEnabled, maintenance }: ShellProps) {
         <Footer />
       </div>
       )}
-      {L.navigation === "floating" && !editMode && L.template !== "editorial" && <FloatingNav widgets={visible} />}
+      {L.navigation === "floating" && !editMode && L.template !== "editorial" && L.template !== "stage" && <FloatingNav widgets={visible} />}
       <CommandPalette />
       <ShortcutsDialog />
       <KeyboardShortcuts />

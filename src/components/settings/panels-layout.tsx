@@ -1,6 +1,6 @@
 "use client";
 
-import { Columns3, LayoutDashboard, LayoutGrid, Newspaper, PanelLeft } from "lucide-react";
+import { Columns3, GalleryHorizontal, LayoutDashboard, LayoutGrid, Newspaper, PanelLeft } from "lucide-react";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useLocale, useT } from "@/hooks/use-i18n";
 import { bi } from "@/lib/i18n";
@@ -27,6 +27,7 @@ export function LayoutPanel() {
     { id: "sidebar", icon: PanelLeft, name: bi(locale, "Seitenleiste", "Sidebar"), desc: bi(locale, "Profil links/rechts fixiert", "Sticky profile column") },
     { id: "portfolio", icon: Newspaper, name: "Portfolio", desc: bi(locale, "Abschnitte, editorial", "Sections, editorial") },
     { id: "bento", icon: LayoutGrid, name: "Bento", desc: bi(locale, "Feste Kachelhöhen", "Fixed tile heights") },
+    { id: "stage", icon: GalleryHorizontal, name: bi(locale, "Bühne", "Stage"), desc: bi(locale, "Ein Objekt pro Bereich", "One object per section") },
     { id: "editorial", icon: Columns3, name: "Editorial", desc: bi(locale, "Schweizer Raster, großer Schriftzug", "Swiss grid, oversized type") },
   ] as const;
 
@@ -54,6 +55,38 @@ export function LayoutPanel() {
           ))}
         </div>
       </Section>
+      {L.template === "stage" && (
+        <Section
+          title={bi(locale, "Bühne", "Stage")}
+          description={bi(
+            locale,
+            "Jeder Bereich erscheint einzeln als Objekt: Profil → Postkarte, Begrüßung → Ausweis, Uhr → Telemetrie, Über mich/Markdown → Buch, Projekte → Rad, Kontakt → Brief. Navigation zeigt Widgets mit „In Navigation anzeigen“ (sonst alle). Pfeiltasten ← → wechseln.",
+            "Every section appears on its own as an object: profile → postcard, greeting → badge, clock → telemetry, about/markdown → book, projects → wheel, contact → letter. Navigation lists widgets marked “show in navigation” (otherwise all). Arrow keys ← → switch.",
+          )}
+        >
+          <Field label={bi(locale, "Objekt-Darstellung", "Object rendering")} help={bi(locale, "Aus = alle Widgets als Papierbogen.", "Off = all widgets as paper sheets.")} inline>
+            <Switch checked={L.stage.objects} onChange={(v) => set({ stage: { ...L.stage, objects: v } })} />
+          </Field>
+          <Field label={bi(locale, "Statusleiste oben", "Status bar on top")} inline>
+            <Switch checked={L.stage.showTelemetry} onChange={(v) => set({ stage: { ...L.stage, showTelemetry: v } })} />
+          </Field>
+          <Field label={bi(locale, "Punkt-Ring hinter Objekten", "Dotted halo behind objects")} inline>
+            <Switch checked={L.stage.halo} onChange={(v) => set({ stage: { ...L.stage, halo: v } })} />
+          </Field>
+          <Field label={bi(locale, "Übergang", "Transition")}>
+            <Segmented
+              label="Transition"
+              value={L.stage.transition}
+              onChange={(transition) => set({ stage: { ...L.stage, transition } })}
+              options={[
+                { value: "tear", label: bi(locale, "Papier", "Paper") },
+                { value: "fade", label: bi(locale, "Blende", "Fade") },
+                { value: "none", label: bi(locale, "Keiner", "None") },
+              ]}
+            />
+          </Field>
+        </Section>
+      )}
       {L.template === "editorial" && (
         <Section title="Editorial" description={bi(locale, "Abschnitte erscheinen nummeriert untereinander. Widgets mit Breite ≥ 3 zeigen den Inhalt unter dem Titel, schmalere daneben.", "Sections are stacked and numbered. Widgets with width ≥ 3 show content below the title, narrower ones beside it.")}>
           <Field label={bi(locale, "Großer Schriftzug", "Display text")} help={bi(locale, "Leer = dein Name. Kurze Wörter wirken am stärksten.", "Empty = your name. Short words work best.")} htmlFor="ed-hero">

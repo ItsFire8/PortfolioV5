@@ -24,7 +24,7 @@ export function createWidget(type: string, overrides: Partial<WidgetInstance> = 
     size: { ...def.defaultSize },
     mobile: { hidden: false, w: def.defaultSize.w >= 2 ? 2 : 1 },
     style: "inherit",
-    showInNav: ["about", "resume", "skills", "projects", "contact", "gallery"].includes(type),
+    showInNav: ["about", "resume", "skills", "projects", "contact", "gallery", "badge"].includes(type),
     settings: structuredClone(def.defaultSettings),
     ...overrides,
   };
@@ -56,6 +56,7 @@ export function createDefaultConfig(locale: "de" | "en" = "de"): SiteConfig {
     fixed("quote", "quote", { showTitle: false }),
     fixed("countdown", "countdown", { showTitle: false }),
     fixed("contact", "contact"),
+    fixed("badge", "badge", { title: locale === "de" ? "Visitenkarte" : "Card", showTitle: false }),
     fixed("weather", "weather", { enabled: false }),
     fixed("rss", "rss", { enabled: false }),
     fixed("gallery", "gallery", { enabled: false }),

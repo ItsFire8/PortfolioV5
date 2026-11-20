@@ -3,11 +3,11 @@
 Selbst gehostete, vollständig konfigurierbare persönliche Website – Portfolio und persönliches Dashboard in einem.
 Alles (Inhalte, Design, Layout, Widgets) wird über die Oberfläche eingestellt; im Quellcode stehen keine persönlichen Inhalte.
 
-- **20 Widgets**: Profil, Begrüßung, Über mich, Lebenslauf, Fähigkeiten, Projekte, Social Media, Links & Lesezeichen, Suche, Uhr, Wetter, Kalender, Notizen, To-dos, RSS, Galerie, Zitate, Countdown, Kontaktformular, eigene Widgets (Markdown, Einbettung, Bild, Kennzahl)
+- **21 Widgets**: Profil, Begrüßung, Kontakt-Anhänger (mit vCard), Über mich, Lebenslauf, Fähigkeiten, Projekte, Social Media, Links & Lesezeichen, Suche, Uhr, Wetter, Kalender, Notizen, To-dos, RSS, Galerie, Zitate, Countdown, Kontaktformular, eigene Widgets (Markdown, Einbettung, Bild, Kennzahl)
 - **Live-Editor**: Drag-and-drop, Größe per Ziehen, Duplizieren, Ein-/Ausblenden, Undo/Redo, Autosave
 - **Konfigurationscenter** (Zahnrad): Allgemein, Erscheinung, Layout, Widgets, Schnellzugriffe, Daten
 - **13 Design-Vorlagen** (inkl. „Architectural Grid“ im Schweizer Raster-Stil und „Tactile Dark“ mit Papier-Objekten), Light/Dark/AMOLED/System, Glassmorphism, animierte Hintergründe, eigenes CSS
-- **6 Layout-Vorlagen**: Dashboard, Seitenleiste, Portfolio, Bento, Editorial (großer Schriftzug, nummerierte Abschnitte, Rasterlinien, Scroll-Effekte: Parallaxe, Wort-für-Wort-Einfärben, Wortfeld, fixierte Bildsequenz, Manifest, Bild-Aufdecken), Bühne (ein Objekt pro Bereich: Postkarte, Ausweis, Telemetrie, Buch, Projekt-Rad, Briefpapier; Papier-Übergang, Wechsel per Mausrad, Wischen oder Pfeiltasten) – plus eigene Mobil-Reihenfolge
+- **6 Layout-Vorlagen**: Dashboard, Seitenleiste, Portfolio, Bento, Editorial (großer Schriftzug, nummerierte Abschnitte, Rasterlinien, Scroll-Effekte: Parallaxe, Wort-für-Wort-Einfärben, Wortfeld, fixierte Bildsequenz, Manifest, Bild-Aufdecken), Bühne (ein Objekt pro Bereich: Postkarte, Ausweis, Telemetrie, Buch, Projekt-Rad, Briefpapier, ziehbarer Kontakt-Anhänger am Band; Papier-Übergang, Wechsel per Mausrad, Wischen oder Pfeiltasten) – plus eigene Mobil-Reihenfolge
 - **Admin-Bereich**: Benutzer & Rollen, Medien, Nachrichten, Statistiken, Wartungsmodus, Backups, Besuchervorschau
 - **Öffentlich vs. privat** pro Widget – private Widgets werden serverseitig herausgefiltert und nie ausgeliefert
 - Deutsch & Englisch, Befehlspalette (`Strg + K`), Tastaturkürzel, PWA mit Offline-Cache

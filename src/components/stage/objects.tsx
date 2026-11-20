@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, animate, motion, useMotionValue, useSpring, useTransform, useVelocity } from "framer-motion";
 import { ArrowUpRight, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { createPortal } from "react-dom";
@@ -14,6 +14,7 @@ import { useNow } from "@/hooks/use-now";
 import { BrandIcon, platformLabel } from "@/components/brand-icon";
 import { WIDGET_COMPONENTS } from "@/widgets/components";
 import { getDict } from "@/lib/i18n";
+import { contactData, TagFace } from "@/widgets/badge";
 
 /* ------------------------------------------------------------------ */
 /* Shared bits                                                         */
@@ -547,6 +548,102 @@ function Letter({ widget, config, locale }: { widget: WidgetInstance; config: Si
 }
 
 /* ------------------------------------------------------------------ */
+/* Contact tag on a lanyard – draggable, swings back like a pendulum   */
+/* ------------------------------------------------------------------ */
+
+
+function ContactTag({ widget, config, locale }: { widget: WidgetInstance; config: SiteConfig; locale: Locale }) {
+  const d = contactData(widget, config);
+  // Strap length adapts to the viewport so the whole card stays visible (~480px card + chrome).
+  const [len, setLen] = useState(220);
+  const strapLen = useMotionValue(220);
+  useEffect(() => {
+    const fit = () => {
+      const v = Math.round(Math.max(90, Math.min(300, window.innerHeight - 92 - 96 - 500)));
+      setLen(v);
+      strapLen.set(v);
+    };
+    fit();
+    window.addEventListener("resize", fit);
+    return () => window.removeEventListener("resize", fit);
+  }, [strapLen]);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const [grabbed, setGrabbed] = useState(false);
+  // Tilt follows the horizontal offset (pendulum) plus a bit of the drag speed.
+  const vx = useSpring(useVelocity(x), { stiffness: 300, damping: 40 });
+  const rotate = useTransform([x, vx] as never, ([px, v]: number[]) => Math.max(-38, Math.min(38, px * 0.09 + v * 0.012)));
+  const rotateY = useTransform(vx, [-1800, 1800], [28, -28]);
+  // Strap from the anchor (0,0) to the clip on top of the card, sagging when slack.
+  const strap = useTransform([x, y, strapLen] as never, ([px, py, L]: number[]) => {
+    const ey = L + py;
+    const dist = Math.hypot(px, ey);
+    const slack = Math.max(0, L - dist);
+    const cx = px / 2 + (px >= 0 ? -1 : 1) * slack * 0.5;
+    const cy = ey / 2 + slack * 0.7;
+    return `M0 -40 L0 0 Q${cx} ${cy} ${px} ${ey}`;
+  });
+
+  // Drop-in: the whole lanyard falls in from above the viewport, then the card
+  // overshoots on the strap and settles with a small swing.
+  const drop = useMotionValue(-1200);
+  useEffect(() => {
+    const vh = window.innerHeight;
+    drop.set(-vh - 200);
+    const a = animate(drop, 0, { type: "spring", stiffness: 55, damping: 12, mass: 1.1 });
+    const b = animate(y, [0, 0, 46, 0], { duration: 1.6, times: [0, 0.38, 0.55, 1], ease: "easeOut" });
+    const c = animate(x, [0, 0, -18, 12, 0], { duration: 2.4, times: [0, 0.4, 0.6, 0.8, 1], ease: "easeInOut" });
+    return () => (a.stop(), b.stop(), c.stop());
+  }, [drop, x, y]);
+
+  const release = (_: unknown, info: { velocity: { x: number; y: number } }) => {
+    setGrabbed(false);
+    animate(x, 0, { type: "spring", stiffness: 45, damping: 3.2, velocity: info.velocity.x });
+    animate(y, 0, { type: "spring", stiffness: 90, damping: 7, velocity: info.velocity.y });
+  };
+
+  return (
+    <motion.div className="relative -mt-6 w-full max-w-xl self-start" style={{ y: drop, height: len + 520 }} data-no-swipe>
+      <svg className="pointer-events-none absolute left-1/2 top-0 size-px overflow-visible" aria-hidden>
+        <motion.path d={strap} stroke="#151515" strokeWidth={24} fill="none" />
+        <motion.path d={strap} stroke="rgba(255,255,255,.09)" strokeWidth={18} strokeDasharray="5 4" fill="none" />
+        <motion.path d={strap} stroke="#151515" strokeWidth={13} fill="none" />
+      </svg>
+      <motion.div
+        drag
+        dragMomentum={false}
+        dragElastic={0.18}
+        dragConstraints={{ left: -260, right: 260, top: -len + 40, bottom: 120 }}
+        onDragStart={() => setGrabbed(true)}
+        onDragEnd={release}
+        style={{ x, y, rotate, rotateY, top: len, transformOrigin: "50% 0%", transformPerspective: 900 }}
+        className={cn("absolute left-1/2 -ml-[150px] w-[300px] touch-none select-none", grabbed ? "cursor-grabbing" : "cursor-grab")}
+        aria-label={bi(locale, "Kontakt-Anhänger – zum Ziehen greifen", "Contact tag – grab to drag")}
+      >
+        <div className="relative mx-auto -mb-2 h-8 w-14 rounded-b-[8px] bg-gradient-to-b from-[#9a9a96] to-[#5a5a57] shadow-md" aria-hidden>
+          <span className="absolute left-1/2 top-2 h-2 w-6 -translate-x-1/2 rounded-full bg-black/40" />
+        </div>
+        <Paper className="relative rounded-[16px] p-5 shadow-[0_45px_80px_-30px_rgba(0,0,0,.9)]">
+          <div className="mx-auto mb-4 h-2 w-16 rounded-full bg-black/15" aria-hidden />
+          <TagFace d={d} locale={locale} />
+          <div className="mt-5 flex items-end justify-between gap-3 border-t border-black/10 pt-3 font-mono text-[0.56rem] uppercase tracking-wider text-muted">
+            <span>
+              ID · {d.username || "guest"}
+              <br />
+              {bi(locale, "Gültig", "Valid")} {new Date().getFullYear()}
+            </span>
+            <Barcode value={d.name + d.email} className="w-24 text-fg" />
+          </div>
+        </Paper>
+      </motion.div>
+      <p className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 font-mono text-[0.6rem] uppercase tracking-[0.18em] text-muted">
+        {bi(locale, "Ziehen & loslassen", "Drag & let go")}
+      </p>
+    </motion.div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Sheet – every other widget                                          */
 /* ------------------------------------------------------------------ */
 
@@ -576,6 +673,7 @@ export function StageObject({ widget, config, locale, index, title, objects, isO
     if (widget.type === "about" || (widget.type === "custom" && widget.settings.kind === "markdown")) return <Book widget={widget} config={config} locale={locale} number={n} title={title} />;
     if (widget.type === "projects") return <Wheel widget={widget} config={config} locale={locale} />;
     if (widget.type === "contact") return <Letter widget={widget} config={config} locale={locale} />;
+    if (widget.type === "badge") return <ContactTag widget={widget} config={config} locale={locale} />;
   }
   // Interactive owner widgets (notes, todos) keep their owner capabilities.
   if (isOwner && (widget.type === "notes" || widget.type === "todo")) {

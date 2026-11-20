@@ -28,5 +28,6 @@ export const WIDGET_COMPONENTS: Record<string, ComponentType<WidgetProps>> = {
   quote: d(() => import("./quote")),
   countdown: d(() => import("./countdown")),
   contact: d(() => import("./contact")),
+  badge: d(() => import("./badge")),
   custom: d(() => import("./custom")),
 };

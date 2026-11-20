@@ -114,9 +114,9 @@ export function StageShell({ widgets, config, isOwner, editMode }: { widgets: Wi
     if (!el || editMode || !st.scrollNavigate) return;
     let acc = 0;
     let last = 0;
-    const canScroll = (target: EventTarget | null, dy: number) => {
+    const canScroll = (target: EventTarget | null, dy: number, touch = false) => {
       for (let n = target as HTMLElement | null; n && n !== el; n = n.parentElement) {
-        if (n.getAttribute("role") === "listbox") return true;
+        if (n.getAttribute("role") === "listbox" || (touch && n.hasAttribute("data-no-swipe"))) return true;
         const oy = getComputedStyle(n).overflowY;
         if ((oy === "auto" || oy === "scroll") && n.scrollHeight > n.clientHeight + 2) {
           if (dy > 0 && n.scrollTop + n.clientHeight < n.scrollHeight - 2) return true;
@@ -146,7 +146,7 @@ export function StageShell({ widgets, config, isOwner, editMode }: { widgets: Wi
     };
     const onTouchEnd = (e: TouchEvent) => {
       const dy = startY - e.changedTouches[0].clientY;
-      if (Math.abs(dy) > 70 && !canScroll(startTarget, dy)) step(dy);
+      if (Math.abs(dy) > 70 && !canScroll(startTarget, dy, true)) step(dy);
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     el.addEventListener("touchstart", onTouchStart, { passive: true });

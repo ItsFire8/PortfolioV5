@@ -7,6 +7,7 @@ import { bi } from "@/lib/i18n";
 import type { GeneralConfig } from "@/lib/config/schema";
 import { useConfigStore } from "@/store/config-store";
 import { Field, Input, Select, Textarea } from "@/components/ui/input";
+import { SEARCH_ENGINES } from "@/widgets/definitions";
 import { Section, Segmented } from "@/components/ui/misc";
 import { Switch } from "@/components/ui/switch";
 import { MediaInput } from "./media-picker";
@@ -96,6 +97,38 @@ export function GeneralPanel() {
         <Field label={bi(locale, "Befehlspalette (Strg + K)", "Command palette (Ctrl + K)")} inline>
           <Switch checked={c.features.commandPalette} onChange={(v) => patch("features", { commandPalette: v })} />
         </Field>
+        {c.features.commandPalette && (
+          <>
+            <Field
+              label={bi(locale, "Websuche in der Befehlspalette", "Web search in the command palette")}
+              help={bi(locale, "„Wie Suchleiste“ nutzt die Suchmaschine des Suchleisten-Widgets – inklusive der Wahl, die Besucher dort treffen.", "“Like search bar” uses the search widget's engine – including the visitor's choice there.")}
+              htmlFor="pal-engine"
+            >
+              <Select id="pal-engine" value={c.features.paletteEngine} onChange={(e) => patch("features", { paletteEngine: e.target.value })}>
+                <option value="auto">{bi(locale, "Wie Suchleiste", "Like search bar")}</option>
+                {Object.entries(SEARCH_ENGINES).map(([k, v]) => (
+                  <option key={k} value={k}>
+                    {v.name}
+                  </option>
+                ))}
+                <option value="custom">{bi(locale, "Eigene URL", "Custom URL")}</option>
+              </Select>
+            </Field>
+            {c.features.paletteEngine === "custom" && (
+              <Field
+                label={bi(locale, "Such-URL (%s = Suchbegriff)", "Search URL (%s = query)")}
+                help={
+                  c.features.paletteSearchUrl && !/^https?:\/\/.+%s/.test(c.features.paletteSearchUrl)
+                    ? bi(locale, "Muss mit http(s):// beginnen und %s enthalten – sonst wird DuckDuckGo verwendet.", "Must start with http(s):// and contain %s – otherwise DuckDuckGo is used.")
+                    : bi(locale, "z. B. https://search.example.org/search?q=%s (auch eigene SearXNG-Instanz)", "e.g. https://search.example.org/search?q=%s (also your own SearXNG instance)")
+                }
+                htmlFor="pal-url"
+              >
+                <Input id="pal-url" type="url" value={c.features.paletteSearchUrl} placeholder="https://…?q=%s" onChange={(e) => patch("features", { paletteSearchUrl: e.target.value })} />
+              </Field>
+            )}
+          </>
+        )}
         <Field label={bi(locale, "Tastaturkürzel", "Keyboard shortcuts")} inline>
           <Switch checked={c.features.shortcuts} onChange={(v) => patch("features", { shortcuts: v })} />
         </Field>

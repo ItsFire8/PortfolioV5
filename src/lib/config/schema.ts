@@ -181,6 +181,10 @@ export const siteConfigSchema = z.object({
     commandPalette: z.boolean(),
     shortcuts: z.boolean(),
     visitorThemeToggle: z.boolean(),
+    /** Web search used by the command palette: "auto" = like the search widget, an engine id, or "custom". */
+    paletteEngine: z.string().regex(/^[a-z0-9-]{1,40}$/),
+    /** Custom search URL for the palette, %s = query. */
+    paletteSearchUrl: url,
   }),
 });
 

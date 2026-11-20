@@ -734,3 +734,24 @@ export const WIDGETS_BY_TYPE: Record<string, WidgetDefinition> = Object.fromEntr
 );
 
 export const getWidgetDefinition = (type: string) => WIDGETS_BY_TYPE[type];
+
+/**
+ * Search URL template (with %s) and display name for the command palette.
+ * "auto" follows the first search widget – including the engine a visitor picked there.
+ */
+export function paletteSearch(
+  config: { features: { paletteEngine: string; paletteSearchUrl: string }; widgets: { type: string; id: string; enabled: boolean; settings: Record<string, unknown> }[] },
+  visitorChoice: Record<string, string> = {},
+): { url: string; name: string } {
+  const fallback = { url: SEARCH_ENGINES.duckduckgo.url, name: SEARCH_ENGINES.duckduckgo.name };
+  const valid = (u: unknown): u is string => typeof u === "string" && /^https?:\/\/.+%s/.test(u);
+  const f = config.features;
+  if (f.paletteEngine === "custom") return valid(f.paletteSearchUrl) ? { url: f.paletteSearchUrl, name: new URL(f.paletteSearchUrl.replace("%s", "")).hostname.replace(/^www\./, "") } : fallback;
+  if (f.paletteEngine !== "auto") return SEARCH_ENGINES[f.paletteEngine] ? { ...SEARCH_ENGINES[f.paletteEngine] } : fallback;
+  const w = config.widgets.find((x) => x.type === "search" && x.enabled) ?? config.widgets.find((x) => x.type === "search");
+  if (!w) return fallback;
+  const chosen = w.settings.allowSwitch ? visitorChoice[w.id] : undefined;
+  const id = chosen && (SEARCH_ENGINES[chosen] || chosen === "custom") ? chosen : String(w.settings.engine ?? "");
+  if (id === "custom") return valid(w.settings.customUrl) ? { url: w.settings.customUrl, name: new URL(w.settings.customUrl.replace("%s", "")).hostname.replace(/^www\./, "") } : fallback;
+  return SEARCH_ENGINES[id] ? { ...SEARCH_ENGINES[id] } : fallback;
+}

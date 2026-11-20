@@ -130,7 +130,7 @@ export function createDefaultConfig(locale: "de" | "en" = "de"): SiteConfig {
     widgets,
     quickLinks: [],
     seo: { keywords: "", ogImage: "", indexable: true },
-    features: { pwa: true, commandPalette: true, shortcuts: true, visitorThemeToggle: true },
+    features: { pwa: true, commandPalette: true, shortcuts: true, visitorThemeToggle: true, paletteEngine: "auto", paletteSearchUrl: "" },
   };
   return siteConfigSchema.parse(config);
 }

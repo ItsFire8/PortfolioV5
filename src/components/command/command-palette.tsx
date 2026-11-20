@@ -17,7 +17,7 @@ import { Kbd } from "@/components/ui/misc";
 import { widgetTitle } from "@/components/grid/widget-frame";
 import { useFullscreen } from "@/components/shell/use-fullscreen";
 import { logout } from "@/components/shell/session";
-import { SEARCH_ENGINES } from "@/widgets/definitions";
+import { paletteSearch } from "@/widgets/definitions";
 
 interface Item {
   id: string;
@@ -119,17 +119,16 @@ export function CommandPalette() {
           .sort((a, b) => b.score - a.score)
           .map((x) => x.i);
     if (s) {
-      const engineId = (config.widgets.find((w) => w.type === "search")?.settings.engine as string) || "duckduckgo";
-      const tpl = SEARCH_ENGINES[engineId]?.url ?? SEARCH_ENGINES.duckduckgo.url;
+      const engine = paletteSearch(config, useUIStore.getState().searchEngine);
       list.push({
         id: "web",
         group: t.palette.web,
         label: `„${q.trim()}“`,
-        hint: SEARCH_ENGINES[engineId]?.name ?? "DuckDuckGo",
+        hint: engine.name,
         icon: Globe,
         run: () => {
           close();
-          window.open(tpl.replace("%s", encodeURIComponent(q.trim())), "_blank", "noopener,noreferrer");
+          window.open(engine.url.replace("%s", encodeURIComponent(q.trim())), "_blank", "noopener,noreferrer");
         },
       });
     }

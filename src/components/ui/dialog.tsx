@@ -11,6 +11,12 @@ const layers: symbol[] = [];
 
 function useFocusTrap(open: boolean, onClose: () => void) {
   const ref = useRef<HTMLDivElement>(null);
+  // Keep the latest onClose in a ref: the effect below must only run when the dialog
+  // opens/closes – re-running it (e.g. on every keystroke) would steal the focus.
+  const closeRef = useRef(onClose);
+  useEffect(() => {
+    closeRef.current = onClose;
+  }, [onClose]);
   useEffect(() => {
     if (!open) return;
     const me = Symbol("layer");
@@ -26,7 +32,7 @@ function useFocusTrap(open: boolean, onClose: () => void) {
       if (layers[layers.length - 1] !== me) return;
       if (e.key === "Escape") {
         e.stopPropagation();
-        onClose();
+        closeRef.current();
       }
       if (e.key === "Tab" && el) {
         const items = Array.from(el.querySelectorAll<HTMLElement>(sel)).filter((x) => x.offsetParent !== null);
@@ -49,7 +55,7 @@ function useFocusTrap(open: boolean, onClose: () => void) {
       document.removeEventListener("keydown", onKey, true);
       prev?.focus?.();
     };
-  }, [open, onClose]);
+  }, [open]);
   return ref;
 }
 

@@ -603,3 +603,12 @@ input[type="checkbox"] { accent-color: var(--primary); }
 @media (prefers-reduced-motion: reduce) {
   .ed-fx .ed-grid img { animation: none !important; }
 }
+
+/* Native dropdown lists: some browsers (Firefox, Chrome on Windows) paint the open list with the
+   select's own – here translucent – background. Give options an opaque themed surface so they stay
+   readable in dark designs. */
+select option,
+select optgroup {
+  background-color: var(--surface-solid);
+  color: var(--fg);
+}

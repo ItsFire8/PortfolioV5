@@ -57,7 +57,7 @@ export default function Search({ widget, config }: WidgetProps<S>) {
           }}
           placeholder={`${t.common.search} – ${engine === "custom" ? "Web" : SEARCH_ENGINES[engine]?.name ?? ""}`}
           aria-label={t.common.search}
-          className="h-10 min-w-0 flex-1 bg-transparent text-base text-fg outline-none placeholder:text-subtle"
+          className="h-10 min-w-0 flex-1 bg-transparent text-base text-fg outline-none placeholder:text-subtle focus-visible:outline-none"
           autoComplete="off"
           data-global-search
         />

@@ -650,7 +650,8 @@ function ContactTag({ widget, config, locale }: { widget: WidgetInstance; config
 function Sheet({ widget, config, locale, number, title }: { widget: WidgetInstance; config: SiteConfig; locale: Locale; number: number; title: string }) {
   const Comp = WIDGET_COMPONENTS[widget.type];
   return (
-    <Paper className="relative max-h-[72vh] w-[min(760px,94vw)] rotate-[-0.4deg] overflow-y-auto rounded-[3px] p-6 shadow-[0_40px_80px_-30px_rgba(0,0,0,.85)] sm:p-9">
+    // The search widget opens a suggestion list below its input – it must not be clipped.
+    <Paper className={cn("relative w-[min(760px,94vw)] rotate-[-0.4deg] rounded-[3px] p-6 shadow-[0_40px_80px_-30px_rgba(0,0,0,.85)] sm:p-9", widget.type !== "search" && "max-h-[72vh] overflow-y-auto")}>
       <div className="mb-6 flex items-center justify-between border-b border-black/15 pb-3 font-mono text-[0.62rem] uppercase tracking-[0.14em] text-black/55">
         <span>
           {bi(locale, "Akte", "File")} {String(number).padStart(2, "0")}

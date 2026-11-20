@@ -84,6 +84,17 @@ export const appearanceSchema = z.object({
   shadow: z.number().min(0).max(1),
   animationSpeed: z.number().min(0).max(3),
   customCss: str(50_000),
+  /** Interactive dot / glyph matrix that reacts to the mouse pointer. */
+  matrix: z.object({
+    enabled: z.boolean(),
+    style: z.enum(["dots", "glyphs"]),
+    spacing: z.number().min(10).max(60),
+    radius: z.number().min(40).max(500),
+    color: z.enum(["accent", "primary", "fg"]),
+    showIdle: z.boolean(),
+    /** background = behind cards; foreground = above content (pointer-events: none). */
+    layer: z.enum(["background", "foreground"]),
+  }),
 });
 
 export const layoutSchema = z.object({
@@ -115,6 +126,8 @@ export const layoutSchema = z.object({
     tagline: str(200),
     showGridLines: z.boolean(),
     showCursor: z.boolean(),
+    /** Hide the operating system pointer while the cursor dot is active. */
+    hideSystemCursor: z.boolean(),
     grayscaleImages: z.boolean(),
     sectionNumbers: z.boolean(),
     /** Scroll-linked effects (hero parallax, text scrub, image reveals, pinned gallery). */

@@ -104,6 +104,7 @@ export function LayoutPanel() {
               ["sectionNumbers", bi(locale, "Abschnitte nummerieren", "Number sections")],
               ["grayscaleImages", bi(locale, "Bilder in Graustufen (Farbe beim Überfahren)", "Grayscale images (color on hover)")],
               ["showCursor", bi(locale, "Cursor-Punkt", "Cursor dot")],
+              ["hideSystemCursor", bi(locale, "System-Cursor ausblenden (Punkt ersetzt den Mauszeiger)", "Hide system cursor (the dot replaces the pointer)")],
               ["scrollEffects", bi(locale, "Scroll-Effekte (Parallaxe, Einfärben, Aufdecken, fixierte Galerie)", "Scroll effects (parallax, ink-in text, reveals, pinned gallery)")],
             ] as const
           ).map(([k, label]) => (

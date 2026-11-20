@@ -612,3 +612,22 @@ select optgroup {
   background-color: var(--surface-solid);
   color: var(--fg);
 }
+
+/* Architectural Grid: the cursor dot replaces the system pointer – except where a real
+   cursor matters (text entry, dialogs, menus, panels). */
+@media (pointer: fine) {
+  html.hide-cursor,
+  html.hide-cursor * {
+    cursor: none !important;
+  }
+  html.hide-cursor :is(input, textarea, select, [contenteditable="true"]) {
+    cursor: text !important;
+  }
+  html.hide-cursor :is([role="dialog"], [role="menu"], .glass-panel),
+  html.hide-cursor :is([role="dialog"], [role="menu"], .glass-panel) * {
+    cursor: auto !important;
+  }
+  html.hide-cursor :is([role="dialog"], [role="menu"], .glass-panel) :is(a, button, [role="button"], [role="option"], [role="tab"]) {
+    cursor: pointer !important;
+  }
+}

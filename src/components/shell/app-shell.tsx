@@ -29,6 +29,7 @@ import { KeyboardShortcuts } from "./keyboard";
 import { ShortcutsDialog } from "./shortcuts-dialog";
 import { BackgroundTasks } from "./background-tasks";
 import { EditorialShell } from "./editorial";
+import { MouseMatrix } from "./mouse-matrix";
 import { StageShell } from "./stage";
 
 export interface ShellProps {
@@ -90,6 +91,7 @@ function Shell({ user, statsEnabled, maintenance }: ShellProps) {
     <MotionConfig reducedMotion={speed === 0 ? "always" : "user"} transition={{ duration: 0.3 / Math.max(speed, 0.25) }}>
       <ThemeController />
       <Background />
+      <MouseMatrix />
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-ui focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-fg">
         {t.header.skip}
       </a>

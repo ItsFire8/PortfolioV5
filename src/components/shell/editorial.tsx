@@ -67,31 +67,55 @@ function Hero({ text, fx }: { text: string; fx: boolean }) {
   );
 }
 
-function CursorDot() {
+/**
+ * Cursor dot. With `replace` the operating-system pointer is hidden and the dot follows
+ * the mouse exactly (it *is* the cursor); otherwise it trails softly behind the pointer.
+ * Text fields, dialogs and the edit mode always keep the normal system cursor.
+ */
+function CursorDot({ replace, smooth }: { replace: boolean; smooth: boolean }) {
   const dot = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (!window.matchMedia("(pointer: fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!window.matchMedia("(pointer: fine)").matches) return;
     const el = dot.current!;
-    let x = -100, y = -100, cx = -100, cy = -100, big = false, raf = 0;
+    const root = document.documentElement;
+    if (replace) root.classList.add("hide-cursor");
+    let x = -100, y = -100, cx = -100, cy = -100, big = false, hidden = true, raf = 0;
     const move = (e: PointerEvent) => {
       x = e.clientX;
       y = e.clientY;
-      big = !!(e.target as HTMLElement)?.closest?.("a,button,input,textarea,select,[role=button]");
+      const t = e.target as HTMLElement | null;
+      big = !!t?.closest?.("a,button,input,textarea,select,label,[role=button],[role=option],[role=tab]");
+      // Over dialogs / panels the system cursor is back – hide the dot there.
+      hidden = !!t?.closest?.("[role=dialog],[role=menu],.glass-panel");
+      if (!smooth || cx < -50) (cx = x), (cy = y);
     };
+    const leave = () => (hidden = true);
+    const enter = () => (hidden = false);
     const loop = () => {
-      cx += (x - cx) * 0.22;
-      cy += (y - cy) * 0.22;
+      if (smooth) {
+        cx += (x - cx) * 0.22;
+        cy += (y - cy) * 0.22;
+      } else {
+        cx = x;
+        cy = y;
+      }
+      el.style.opacity = hidden || x < 0 ? "0" : "1";
       el.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%, -50%) scale(${big ? 3.2 : 1})`;
       raf = requestAnimationFrame(loop);
     };
     window.addEventListener("pointermove", move);
+    root.addEventListener("pointerleave", leave);
+    root.addEventListener("pointerenter", enter);
     raf = requestAnimationFrame(loop);
     return () => {
+      root.classList.remove("hide-cursor");
       window.removeEventListener("pointermove", move);
+      root.removeEventListener("pointerleave", leave);
+      root.removeEventListener("pointerenter", enter);
       cancelAnimationFrame(raf);
     };
-  }, []);
-  return <div ref={dot} className="ed-cursor" aria-hidden />;
+  }, [replace, smooth]);
+  return <div ref={dot} className="ed-cursor" style={{ opacity: 0 }} aria-hidden />;
 }
 
 export function EditorialShell({ widgets, config, isOwner, editMode, user }: { widgets: WidgetInstance[]; config: SiteConfig; isOwner: boolean; editMode: boolean; user: { displayName: string } | null }) {
@@ -153,7 +177,7 @@ export function EditorialShell({ widgets, config, isOwner, editMode, user }: { w
   return (
     <div className={cn("editorial relative flex min-h-dvh flex-col", ed.grayscaleImages && "ed-gray", fx && "ed-fx")}>
       {ed.showGridLines && <div className="ed-lines" aria-hidden />}
-      {ed.showCursor && config.appearance.animationSpeed > 0 && <CursorDot />}
+      {ed.showCursor && <CursorDot replace={ed.hideSystemCursor && !editMode} smooth={!ed.hideSystemCursor && motionOK} />}
 
       <div className="px-[var(--page-pad)] pt-[calc(var(--page-pad)*0.5)]">{heroText && <Hero text={heroText} fx={fx} />}</div>
 

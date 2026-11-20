@@ -109,6 +109,7 @@ export function createDefaultConfig(locale: "de" | "en" = "de"): SiteConfig {
       shadow: 0.25,
       animationSpeed: 1,
       customCss: "",
+      matrix: { enabled: false, style: "dots", spacing: 22, radius: 160, color: "accent", showIdle: true, layer: "background" },
     },
     layout: {
       template: "dashboard",
@@ -123,7 +124,7 @@ export function createDefaultConfig(locale: "de" | "en" = "de"): SiteConfig {
       sidebarWidth: 320,
       header: { show: true, sticky: true, showLogo: true, showSearch: true, showQuickLinks: true },
       footer: { show: true, text: "", showLogin: true },
-      editorial: { heroText: "", tagline: "", showGridLines: true, showCursor: true, grayscaleImages: true, sectionNumbers: true, scrollEffects: true, wordField: "", manifesto: "" },
+      editorial: { heroText: "", tagline: "", showGridLines: true, showCursor: true, hideSystemCursor: true, grayscaleImages: true, sectionNumbers: true, scrollEffects: true, wordField: "", manifesto: "" },
       stage: { showTelemetry: true, objects: true, transition: "tear", halo: true, scrollNavigate: true },
       mobile: { columns: 1, customOrder: false, order: [], compactHeader: true },
     },

@@ -158,6 +158,56 @@ export function AppearancePanel() {
           </>
         )}
       </Section>
+      <Section title={bi(locale, "Maus-Matrix", "Mouse matrix")} description={bi(locale, "Ein Raster im Hintergrund, das auf den Mauszeiger reagiert.", "A background grid that reacts to the mouse pointer.")}>
+        <Field label={bi(locale, "Maus-Matrix aktivieren", "Enable mouse matrix")} inline>
+          <Switch checked={a.matrix.enabled} onChange={(enabled) => set({ matrix: { ...a.matrix, enabled } })} />
+        </Field>
+        {a.matrix.enabled && (
+          <>
+            <Field label={bi(locale, "Stil", "Style")}>
+              <Segmented
+                label="Matrix style"
+                value={a.matrix.style}
+                onChange={(style) => set({ matrix: { ...a.matrix, style } })}
+                options={[
+                  { value: "dots", label: bi(locale, "Punkte", "Dots") },
+                  { value: "glyphs", label: bi(locale, "Zeichen", "Glyphs") },
+                ]}
+              />
+            </Field>
+            <Field label={bi(locale, "Ebene", "Layer")} help={bi(locale, "Vordergrund: über den Karten, nur rund um den Mauszeiger – Klicks gehen weiterhin durch.", "Foreground: above the cards, only around the pointer – clicks still go through.")}>
+              <Segmented
+                label="Matrix layer"
+                value={a.matrix.layer}
+                onChange={(layer) => set({ matrix: { ...a.matrix, layer } })}
+                options={[
+                  { value: "background", label: bi(locale, "Hintergrund", "Background") },
+                  { value: "foreground", label: bi(locale, "Vordergrund", "Foreground") },
+                ]}
+              />
+            </Field>
+            <Field label={bi(locale, "Farbe", "Color")}>
+              <Segmented
+                label="Matrix color"
+                value={a.matrix.color}
+                onChange={(color) => set({ matrix: { ...a.matrix, color } })}
+                options={[
+                  { value: "accent", label: bi(locale, "Akzent", "Accent") },
+                  { value: "primary", label: bi(locale, "Primär", "Primary") },
+                  { value: "fg", label: bi(locale, "Text", "Text") },
+                ]}
+              />
+            </Field>
+            <Slider label={bi(locale, "Rasterabstand", "Grid spacing")} value={a.matrix.spacing} min={10} max={60} unit="px" onChange={(spacing) => set({ matrix: { ...a.matrix, spacing } })} />
+            <Slider label={bi(locale, "Wirkungsradius", "Radius")} value={a.matrix.radius} min={40} max={500} step={10} unit="px" onChange={(radius) => set({ matrix: { ...a.matrix, radius } })} />
+            {a.matrix.style === "dots" && a.matrix.layer === "background" && (
+              <Field label={bi(locale, "Raster auch in Ruhe zeigen", "Show grid at rest")} inline>
+                <Switch checked={a.matrix.showIdle} onChange={(showIdle) => set({ matrix: { ...a.matrix, showIdle } })} />
+              </Field>
+            )}
+          </>
+        )}
+      </Section>
       <Section title={t.settings.surfaces}>
         <Field label={bi(locale, "Kartenstil", "Card style")}>
           <Segmented label="Card" value={a.cardStyle} onChange={(cardStyle) => set({ cardStyle })} options={CARD_STYLES.map((s) => ({ value: s, label: { glass: "Glass", solid: "Solid", outline: "Outline", flat: "Flat", line: "Line" }[s] }))} />

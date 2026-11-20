@@ -31,6 +31,8 @@ export function MouseMatrix() {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const gap = m.spacing;
     const glyphs = m.style === "glyphs";
+    const network = m.style === "network";
+    let posX = new Float32Array(0), posY = new Float32Array(0);
     const animate = !reduced && speed > 0;
     const decay = animate ? Math.pow(0.9, speed) : 0;
     let cols = 0, rows = 0, energy = new Float32Array(0), chars: string[] = [];
@@ -44,6 +46,8 @@ export function MouseMatrix() {
       cols = Math.ceil(window.innerWidth / gap) + 1;
       rows = Math.ceil(window.innerHeight / gap) + 1;
       energy = new Float32Array(cols * rows);
+      posX = new Float32Array(cols * rows);
+      posY = new Float32Array(cols * rows);
       chars = Array.from({ length: cols * rows }, () => GLYPHS[(Math.random() * GLYPHS.length) | 0]);
       draw();
     };
@@ -67,6 +71,14 @@ export function MouseMatrix() {
           const e = Math.max(target, energy[i] * decay);
           energy[i] = e < 0.01 ? 0 : e;
           if (e > 0.01) active = true;
+          if (network) {
+            // Parallax: active points are pushed slightly away from the pointer.
+            const push = e * gap * 0.45;
+            const k = d > 0.001 ? push / d : 0;
+            posX[i] = x + (x - px) * k;
+            posY[i] = y + (y - py) * k;
+            continue;
+          }
           if (glyphs) {
             if (e <= 0.01) continue;
             if (Math.random() < 0.05 * e) chars[i] = GLYPHS[(Math.random() * GLYPHS.length) | 0];
@@ -85,8 +97,61 @@ export function MouseMatrix() {
           }
         }
       }
+      if (network) drawNetwork();
       ctx.globalAlpha = 1;
       return active;
+    };
+
+    /** Lines between every pair of neighbouring active points, then the points on top. */
+    const drawNetwork = () => {
+      const T = 0.06;
+      const idle = m.showIdle && m.layer !== "foreground";
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = hot;
+      // right, down, down-right, down-left neighbours → a triangulated mesh
+      const links: [number, number][] = [
+        [1, 0],
+        [0, 1],
+        [1, 1],
+        [-1, 1],
+      ];
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const i = r * cols + c;
+          const e = energy[i];
+          if (e < T) continue;
+          for (const [dc, dr] of links) {
+            const cc = c + dc;
+            const rr = r + dr;
+            if (cc < 0 || cc >= cols || rr >= rows) continue;
+            const j = rr * cols + cc;
+            const f = energy[j];
+            if (f < T) continue;
+            ctx.globalAlpha = Math.min(e, f) * (dc && dr ? 0.45 : 0.75);
+            ctx.beginPath();
+            ctx.moveTo(posX[i], posY[i]);
+            ctx.lineTo(posX[j], posY[j]);
+            ctx.stroke();
+          }
+        }
+      }
+      for (let i = 0; i < energy.length; i++) {
+        const e = energy[i];
+        if (e < T) {
+          if (!idle) continue;
+          ctx.globalAlpha = 0.1;
+          ctx.fillStyle = base;
+          ctx.beginPath();
+          ctx.arc((i % cols) * gap + gap / 2, Math.floor(i / cols) * gap + gap / 2, 0.9, 0, Math.PI * 2);
+          ctx.fill();
+          continue;
+        }
+        ctx.globalAlpha = Math.min(1, 0.35 + e);
+        ctx.fillStyle = hot;
+        ctx.beginPath();
+        ctx.arc(posX[i], posY[i], 1.2 + e * 2.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
     };
 
     const loop = () => {

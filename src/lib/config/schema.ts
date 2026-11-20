@@ -87,7 +87,7 @@ export const appearanceSchema = z.object({
   /** Interactive dot / glyph matrix that reacts to the mouse pointer. */
   matrix: z.object({
     enabled: z.boolean(),
-    style: z.enum(["dots", "glyphs"]),
+    style: z.enum(["dots", "glyphs", "network"]),
     spacing: z.number().min(10).max(60),
     radius: z.number().min(40).max(500),
     color: z.enum(["accent", "primary", "fg"]),
